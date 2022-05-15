@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+    <!-- 引入 Element 样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+<div id="app">
+    <el-row type="flex" class="row-bg" justify="center">
+        <video id=”video” autoplay=”"></video>
+    </el-row>
+</div>
+<!-- 引入 Vue -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+<!-- 引入 Element 组件库 -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="js/jquery-3.6.0.min.js"></script>
+<script src="js/main.js"></script>
+
+<script>
+    var video = document.getElementById('video');
+
+    //访问摄像头
+    if (navigator.mediaDevices.getUserMedia || navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia) {
+        //调用用户媒体设备, 访问摄像头
+        getUserMedia({video: {width: 330, height: 500}}, success, error);
+    } else {
+        alert('不支持访问用户媒体');
+    }
+
+    //访问用户媒体设备的兼容方法
+    function getUserMedia(constraints, success, error) {
+        if (navigator.mediaDevices.getUserMedia) {
+            //最新的标准API
+            navigator.mediaDevices.getUserMedia(constraints).then(success).catch(error);
+        } else if (navigator.webkitGetUserMedia) {
+            //webkit核心浏览器
+            navigator.webkitGetUserMedia(constraints, success, error)
+        } else if (navigator.mozGetUserMedia) {
+            //firfox浏览器
+            navigator.mozGetUserMedia(constraints, success, error);
+        } else if (navigator.getUserMedia) {
+            //旧版API
+            navigator.getUserMedia(constraints, success, error);
+        }
+    }
+
+    //成功回调
+    function success(stream) {
+        //兼容webkit核心浏览器
+        var CompatibleURL = window.URL || window.webkitURL;
+        //将视频流设置为video元素的源
+        // console.log(stream);
+        //video.src = CompatibleURL.createObjectURL(stream);
+        video.srcObject = stream;
+        video.play();
+    }
+
+    //失败回调
+    function error(error) {
+        console.log("访问用户媒体设备失败");
+    }
+
+</script>
+
+</body>
+</html>
