@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="icon" type="image/png" href="../image/favicon.png">
+    <!-- 引入 Element 样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="../css/home.css">
+</head>
+<body>
+<div id="app">
+    <el-row type="flex">
+        <!--导航-->
+        <el-col :xs="24" :sm="8" :md="5" :lg="4">
+            <el-menu default-active="1" class="el-menu-vertical-demo">
+                <!--登录成功回显用户信息-->
+                <div class="demo-image">
+                    <el-row type="flex" justify="center">
+                        <el-col :span="12">
+                            <el-image
+                                    style="width: 100px; height: 100px"
+                                    :src="url"
+                            ></el-image>
+                        </el-col>
+                    </el-row>
+                    <el-row type="flex" justify="center">
+                        <el-col :span="6">{{fit}}</el-col>
+                    </el-row>
+                </div>
+                <!--导航项-->
+                <el-menu-item index="1">
+                    <i class="el-icon-loading"></i>
+                    <span slot="title">欢迎页</span>
+                </el-menu-item>
+                <el-menu-item index="2">
+                    <i class="el-icon-menu"></i>
+                    <span slot="title">会议申请</span>
+                </el-menu-item>
+                <el-menu-item index="3">
+                    <i class="el-icon-document"></i>
+                    <span slot="title">开始会议</span>
+                </el-menu-item>
+                <el-menu-item index="4">
+                    <i class="el-icon-setting"></i>
+                    <span slot="title">设置</span>
+                </el-menu-item>
+            </el-menu>
+        </el-col>
+        <!--欢迎页-->
+        <el-calendar v-model="value">
+        </el-calendar>
+        <!--会议申请-->
+        <el-col :xs="24" :sm="18" :md="22" :lg="24" v-if="index==2">
+            <template>
+                <el-table
+                        :data="tableData"
+                        style="width: 100%"
+                        :row-class-name="tableRowClassName"
+                        @selection-change="handleSelectionChange">
+                    <el-table-column
+                            type="selection"
+                            width="55">
+                    </el-table-column>
+                    <el-table-column
+                            prop="name"
+                            label="姓名">
+                    </el-table-column>
+                    <el-table-column
+                            prop="dept"
+                            label="部门">
+                    </el-table-column>
+                    <el-table-column
+                            prop="post"
+                            label="部门">
+                    </el-table-column>
+                    <el-table-column
+                            prop="gender"
+                            label="性别">
+                    </el-table-column>
+                </el-table>
+            </template>
+        </el-col>
+    </el-row>
+</div>
+<!-- 引入 JQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"
+        integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
+<!-- 引入 Vue -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+<!-- 引入 Element 组件库 -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="../js/home.js"></script>
+</body>
+</html>

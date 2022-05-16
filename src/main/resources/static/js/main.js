@@ -3,13 +3,16 @@ $(function () {
         el: "#app",
         data() {
             return {
+                // 注册表单弹层
                 registerDialogVisible: false,
+                // 注册表单
                 ruleForm: {
                     name: '',
                     dept: '',
                     post: '',
                     gender: '',
                 },
+                // 注册表单校验
                 rules: {
                     name: [
                         {required: true, message: '请输入姓名', trigger: 'blur'},
@@ -35,11 +38,11 @@ $(function () {
                     video: true
                 }).then(success => {
                     // 摄像头开启成功
-                    this.$refs['video'].srcObject = success
+                    this.$refs['video'].srcObject = success;
                     // 实时拍照效果
-                    this.$refs['video'].play()
+                    this.$refs['video'].play();
                 }).catch(error => {
-                    this.$message.warn('摄像头开启失败，请检查摄像头是否可用！')
+                    this.$message.error('摄像头开启失败，请检查摄像头是否可用！')
                 })
             },
             // 拍照
