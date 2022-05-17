@@ -1,4 +1,4 @@
-package com.scetop.face2;
+package com.scetop.meeting.face2;
 
 
 import com.tencentcloudapi.common.Credential;

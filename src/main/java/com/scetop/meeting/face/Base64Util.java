@@ -1,4 +1,4 @@
-package com.scetop.face;
+package com.scetop.meeting.face;
 
 import org.apache.tomcat.util.codec.binary.Base64;
 

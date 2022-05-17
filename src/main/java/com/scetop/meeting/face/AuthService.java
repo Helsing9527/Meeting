@@ -1,4 +1,4 @@
-package com.scetop.face;
+package com.scetop.meeting.face;
 
 import com.baidu.aip.face.AipFace;
 import org.json.JSONObject;

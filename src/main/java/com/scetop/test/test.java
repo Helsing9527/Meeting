@@ -1,8 +1,8 @@
 package com.scetop.test;
 
 
-import com.scetop.face.Base64Util;
-import com.scetop.face.FaceService;
+import com.scetop.meeting.face.Base64Util;
+import com.scetop.meeting.face.FaceService;
 import org.testng.annotations.Test;
 
 import java.io.File;

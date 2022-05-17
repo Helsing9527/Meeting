@@ -1,7 +1,4 @@
-package com.scetop.face;
-
-import com.baidu.aip.face.AipFace;
-import org.json.JSONObject;
+package com.scetop.meeting.face;
 
 import java.net.URLEncoder;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package com.scetop.face;
+package com.scetop.meeting.face;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

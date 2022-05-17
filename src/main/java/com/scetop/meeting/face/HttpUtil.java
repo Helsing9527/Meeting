@@ -1,4 +1,4 @@
-package com.scetop.face;
+package com.scetop.meeting.face;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
