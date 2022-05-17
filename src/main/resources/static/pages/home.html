@@ -29,29 +29,29 @@
                     </el-row>
                 </div>
                 <!--导航项-->
-                <el-menu-item index="1">
+                <el-menu-item index="1" @click="setIndex(1)">
                     <i class="el-icon-loading"></i>
                     <span slot="title">欢迎页</span>
                 </el-menu-item>
-                <el-menu-item index="2">
+                <el-menu-item index="2" @click="setIndex(2)">
                     <i class="el-icon-menu"></i>
                     <span slot="title">会议申请</span>
                 </el-menu-item>
-                <el-menu-item index="3">
+                <el-menu-item index="3" @click="setIndex(3)">
                     <i class="el-icon-document"></i>
                     <span slot="title">开始会议</span>
                 </el-menu-item>
-                <el-menu-item index="4">
+                <el-menu-item index="4" @click="setIndex(4)">
                     <i class="el-icon-setting"></i>
                     <span slot="title">设置</span>
                 </el-menu-item>
             </el-menu>
         </el-col>
         <!--欢迎页-->
-        <el-calendar v-model="value">
+        <el-calendar v-model="value" v-if="index == 1">
         </el-calendar>
         <!--会议申请-->
-        <el-col :xs="24" :sm="18" :md="22" :lg="24" v-if="index==2">
+        <el-col :xs="24" :sm="18" :md="22" :lg="24" v-if="index == 2">
             <template>
                 <el-table
                         :data="tableData"
@@ -79,7 +79,36 @@
                             label="性别">
                     </el-table-column>
                 </el-table>
+
+                <el-row type="flex" justify="start">
+                    <el-col :span="14">
+                        <el-pagination
+                                @size-change="handleSizeChange"
+                                @current-change="handleCurrentChange"
+                                :current-page="currentPage"
+                                :page-sizes="[10, 20, 30, 40]"
+                                :page-size="10"
+                                background
+                                layout="total, sizes, prev, pager, next, jumper"
+                                :total="50">
+                        </el-pagination>
+                    </el-col>
+                </el-row>
+                <el-row type="flex" justify="center">
+                    <el-col :span="2">
+                        <el-button type="primary" plain>发起会议</el-button>
+                    </el-col>
+                </el-row>
             </template>
+        </el-col>
+        <!--开始会议-->
+        <el-col :xs="24" :sm="18" :md="22" :lg="24" v-if="index == 3">
+            <el-row type="flex" justify="center" align="middle">
+                <el-col :span="2">
+                    <el-button type="primary" plain>开始会议</el-button>
+                </el-col>
+            </el-row>
+
         </el-col>
     </el-row>
 </div>

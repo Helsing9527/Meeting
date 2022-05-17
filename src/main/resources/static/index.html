@@ -6,6 +6,7 @@
     <link rel="icon" type="image/png" href="image/favicon.png">
     <!-- 引入 Element 样式 -->
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+
 </head>
 <body>
 <div id="app">
@@ -15,19 +16,19 @@
         <el-row type="flex" justify="center">
             <el-col :span="12">
                 <!--canvas截取流-->
-                <!--                <canvas ref="canvas" width="640" height="480"></canvas>-->
-                <!--图片展示-->
+                <canvas ref="canvas" width="640" height="480" style="display: none"></canvas>
+<!--                &lt;!&ndash;图片展示&ndash;&gt;-->
                 <video ref="video" width="640" height="480" autoplay></video>
             </el-col>
         </el-row>
         <el-row type="flex" justify="center">
             <el-col :span="6">
                 <!--关闭摄像头-->
-                <el-button type="success" plain @click="closeCamera">关闭摄像头</el-button>
+<!--                <el-button type="success" plain @click="closeCamera">关闭摄像头</el-button>-->
                 <!--登录-->
-                <el-button type="info" plain @click="photograph">登录</el-button>
+                <el-button type="info" plain @click="login">登录</el-button>
                 <!--注册-->
-                <el-button type="primary" plain @click="registerDialogVisible = true">注册</el-button>
+                <el-button type="primary" plain @click="register">注册</el-button>
             </el-col>
         </el-row>
     </template>
@@ -36,7 +37,7 @@
     <el-dialog
             title="注册"
             :visible.sync="registerDialogVisible"
-            width="30%"
+            width="50%"
             center>
 
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
@@ -76,11 +77,14 @@
 </div>
 
 <!-- 引入 JQuery -->
-<script src="https://code.jquery.com/jquery-3.6.0.slim.min.js" integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"
+        integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
 <!-- 引入 Vue -->
 <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
 <!-- 引入 Element 组件库 -->
 <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<!-- 引入 Axios -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="js/main.js"></script>
 
 </body>

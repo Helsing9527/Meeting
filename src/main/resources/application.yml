@@ -1,2 +1,20 @@
+#定义应用端口号
 server:
   port: 80
+
+#配置数据源
+spring:
+  datasource:
+    druid:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql:///meeting?setTimezone=UTC
+      username: root
+      password: root
+
+#设置id使用数据库id自增
+mybatis-plus:
+  global-config:
+    db-config:
+      id-type: auto
+  configuration:
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl

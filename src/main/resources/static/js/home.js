@@ -3,13 +3,14 @@ $(function () {
         el: "#app",
         data() {
             return {
-                index: '',
+                index: '1',
                 value: new Date(),
                 // 用户名
                 fit: '用户名',
                 // 用户头像
                 url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-                tableData: []
+                tableData: [],
+                currentPage: ""
             };
         },
         methods: {
@@ -24,6 +25,15 @@ $(function () {
             handleSelectionChange(val) {
                 this.multipleSelection = val;
                 console.log(val)
+            },
+            setIndex(val) {
+                this.index = val;
+            },
+            handleSizeChange(val) {
+                console.log(`每页 ${val} 条`);
+            },
+            handleCurrentChange(val) {
+                console.log(`当前页: ${val}`);
             }
         }
     })
