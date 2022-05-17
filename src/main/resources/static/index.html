@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>登录</title>
-    <!-- 引入 Element 样式 -->
-    <link rel="stylesheet" href="css/element-ui@2.15.8.css">
     <link rel="icon" type="image/png" href="image/favicon.png">
+    <!-- 引入 Element 样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
 </head>
 <body>
 <div id="app">
 
+    <!-- 摄像区域 -->
     <template>
         <el-row type="flex" justify="center">
             <el-col :span="12">
@@ -59,8 +60,8 @@
             </el-form-item>
             <el-form-item label="性别" prop="gender">
                 <el-radio-group v-model="ruleForm.gender">
-                    <el-radio label="男"></el-radio>
-                    <el-radio label="女"></el-radio>
+                    <el-radio label="男" value="0"></el-radio>
+                    <el-radio label="女" value="1"></el-radio>
                 </el-radio-group>
             </el-form-item>
 
@@ -73,14 +74,14 @@
     </el-dialog>
 
 </div>
-<!-- 引入 Vue -->
-<script src="js/vue@2.js"></script>
-<!-- 引入 Element 组件库 -->
-<script src="js/element-ui@2.15.8.js"></script>
-<!-- 引入 JQuery -->
-<script src="js/jquery-3.6.0.min.js"></script>
-<script src="js/main.js"></script>
 
+<!-- 引入 JQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.slim.min.js" integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
+<!-- 引入 Vue -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+<!-- 引入 Element 组件库 -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="js/main.js"></script>
 
 </body>
 </html>
