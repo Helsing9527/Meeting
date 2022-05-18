@@ -1,43 +1,47 @@
 package com.scetop.meeting.face;
-
-import java.net.URLEncoder;
+import com.baidu.aip.face.AipFace;
+import org.json.JSONObject;
+import org.testng.annotations.Test;
 import java.util.HashMap;
-import java.util.Map;
 
 public class FaceService {
+
+  public static final  AipFace client=new AipFace("26237537","Mui6MglWSqVVwQImqWkfo0PO","4Z0RuBnok5VIMIuq9fQsHYbsBsfDr436");
     //人脸库注册
-    public static String add(String img, String user_id, String user_info) {
-        // 请求url
-        String url = "https://aip.baidubce.com/rest/2.0/face/v3/faceset/user/add";
-        try {
-            String imgParam = URLEncoder.encode(img, "UTF-8");
-            Map<String, Object> map = new HashMap<>();
-            map.put("image", img);////图片base64数据
-            //活体检测
-            map.put("liveness_control", "NORMAL");
-            //搜索的组
-            map.put("group_id", "test");
-            //图片格式
-            map.put("image_type", "BASE64");
-            //图片质量要求
-            map.put("quality_control", "LOW");
-            //人物id
-            map.put("user_id", user_id);
-            //人物信息
-            map.put("user_info", user_info);
+    public static String add(String image, String userId) {
+        // 传入可选参数调用接口
+        HashMap<String, String> options = new HashMap<String, String>();
+        options.put("user_info", "user's info");
+        options.put("quality_control", "NORMAL");
+        options.put("liveness_control", "LOW");
+        options.put("action_type", "REPLACE");
 
-            String param = GsonUtils.toJson(map);
+        String imageType = "BASE64";
+        String groupId = "test";
 
-            // 注意Param格式的编写，此处是最核心的内容，注意uid、user_info、group_id以及images的含义，详细信息看下图参数表，这里添加的图片数量可以自己权衡
-            String accessToken = AuthService.getAuth();
-            String result = HttpUtil.post(url, accessToken, "application/json",param);
-            System.out.println(result);
-            return result;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        // 人脸注册
+        JSONObject res = client.addUser(image, imageType, groupId, userId, options);
+        System.out.println(res.toString(2));
+
+        return res.toString();
     }
+    //    人脸搜索
+    @Test
+    public static String serche(String image) {
+        // 传入可选参数调用接口
+        HashMap<String, Object> options = new HashMap<String, Object>();
+        options.put("match_threshold", "70");
+        options.put("quality_control", "NORMAL");
+        options.put("liveness_control", "LOW");
+//        options.put("user_id", "233451");
+        options.put("max_user_num", "3");
+        String imageType = "BASE64";
+        String groupIdList = "3,2";
 
+        // 人脸搜索
+        JSONObject res = client.search(image, imageType, groupIdList, options);
+        System.out.println(res.toString(2));
 
+        return res.toString();
+    }
 }
