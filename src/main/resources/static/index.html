@@ -46,23 +46,23 @@
             </el-form-item>
             <el-form-item label="部门" prop="dept">
                 <el-select v-model="ruleForm.dept" placeholder="请选择部门">
-                    <el-option label="部门一" value="b1"></el-option>
-                    <el-option label="部门二" value="b2"></el-option>
-                    <el-option label="部门三" value="b3"></el-option>
-                    <el-option label="部门四" value="b4"></el-option>
+                    <el-option label="总裁办" value="总裁办"></el-option>
+                    <el-option label="运营中心" value="运营中心"></el-option>
+                    <el-option label="财务部" value="财务部"></el-option>
+                    <el-option label="人资管理部" value="人资管理部"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="职位" prop="post">
                 <el-select v-model="ruleForm.post" placeholder="请选择职位">
-                    <el-option label="总裁" value="p1"></el-option>
-                    <el-option label="经理" value="p2"></el-option>
-                    <el-option label="员工" value="p3"></el-option>
+                    <el-option label="总裁" value="总裁"></el-option>
+                    <el-option label="经理" value="经理"></el-option>
+                    <el-option label="员工" value="员工"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="性别" prop="gender">
                 <el-radio-group v-model="ruleForm.gender">
-                    <el-radio label="男" value="0"></el-radio>
-                    <el-radio label="女" value="1"></el-radio>
+                    <el-radio label="男" value="男"></el-radio>
+                    <el-radio label="女" value="女"></el-radio>
                 </el-radio-group>
             </el-form-item>
 
@@ -79,12 +79,13 @@
 <!-- 引入 JQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"
         integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
+<!-- 引入 Axios -->
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <!-- 引入 Vue -->
-<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+<!--<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>-->
+<script src="https://unpkg.com/vue@2.6.14/dist/vue.js"></script>
 <!-- 引入 Element 组件库 -->
 <script src="https://unpkg.com/element-ui/lib/index.js"></script>
-<!-- 引入 Axios -->
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="js/main.js"></script>
 
 </body>

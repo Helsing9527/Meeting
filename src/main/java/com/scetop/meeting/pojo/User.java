@@ -12,5 +12,5 @@ public class User {
     private String name;
     private String dept;
     private String post;
-    private Integer gender;
+    private String gender;
 }

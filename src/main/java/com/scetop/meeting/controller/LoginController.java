@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/login")
+@RequestMapping("/meeting")
 public class LoginController {
 
     @Autowired
@@ -21,7 +21,7 @@ public class LoginController {
     public R login(@RequestBody User user) {
 //        String hex = FaceService.add(image, "1", "hex");
         boolean flag = userServer.save(user);
-        return new R(flag,null,null);
+        return new R(flag,null,flag ? "添加成功^_^" : "添加失败-_-!");
     }
 
     @GetMapping

@@ -10,7 +10,7 @@ $(function () {
                     name: '',
                     dept: '',
                     post: '',
-                    gender: '',
+                    gender: ''
                 },
                 // 注册表单校验
                 rules: {
@@ -55,7 +55,7 @@ $(function () {
                 console.log(imgBase64)
                 /**------------到这里为止，就拿到了base64位置的地址，后面是下载功能----------*/
 
-                // 由字节转换为KB 判断大小
+                    // 由字节转换为KB 判断大小
                 let str = imgBase64.replace('data:image/jpeg;base64,', '')
                 let strLength = str.length
                 let fileLength = parseInt(strLength - (strLength / 8) * 2)　　　 // 图片尺寸  用于判断
@@ -82,11 +82,21 @@ $(function () {
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        this.$message.success('注册成功 ^_^');
-                        this.registerDialogVisible = false;
+                        // this.$message.success('注册成功 ^_^');
+                        // this.registerDialogVisible = false;
                         console.log(this.ruleForm)
+                        console.log(formName)
+                        console.log(valid)
+                        axios.post("/meeting", this.ruleForm).then((res) => {
+                            if (res.data.flag) {
+                                this.registerDialogVisible = false;
+                                this.$message.success(res.data.msg);
+                            } else {
+                                this.$message.error(res.data.msg);
+                            }
+                        })
                     } else {
-                        this.$message.error('注册失败 :(')
+                        this.$message.error('请完善表单内容 :(')
                         return false;
                     }
                 });
@@ -98,7 +108,6 @@ $(function () {
             },
             // 注册按钮
             register() {
-                // this.photograph();
                 this.registerDialogVisible = true;
             },
             resetForm(formName) {

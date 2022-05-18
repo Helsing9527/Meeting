@@ -1,4 +1,5 @@
 $(function () {
+    // import {axios} from "./axios.min.js";
     new Vue({
         el: "#app",
         data() {
@@ -14,6 +15,18 @@ $(function () {
             };
         },
         methods: {
+            // 导航内容切换
+            setIndex(val) {
+                this.index = val;
+            },
+            // 会议申请
+            meetingApply() {
+                this.setIndex(2);
+                axios.get("/meeting").then((res)=>{
+                    this.tableData = res.data.data;
+                })
+            },
+            // 表格选中
             tableRowClassName({row, rowIndex}) {
                 if (rowIndex === 1) {
                     return 'warning-row';
@@ -26,9 +39,7 @@ $(function () {
                 this.multipleSelection = val;
                 console.log(val)
             },
-            setIndex(val) {
-                this.index = val;
-            },
+            // 分页
             handleSizeChange(val) {
                 console.log(`每页 ${val} 条`);
             },
@@ -36,5 +47,7 @@ $(function () {
                 console.log(`当前页: ${val}`);
             }
         }
-    })
+    });
+
+
 })

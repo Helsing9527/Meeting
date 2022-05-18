@@ -33,7 +33,7 @@
                     <i class="el-icon-loading"></i>
                     <span slot="title">欢迎页</span>
                 </el-menu-item>
-                <el-menu-item index="2" @click="setIndex(2)">
+                <el-menu-item index="2" @click="meetingApply">
                     <i class="el-icon-menu"></i>
                     <span slot="title">会议申请</span>
                 </el-menu-item>
@@ -115,10 +115,14 @@
 <!-- 引入 JQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"
         integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
+<!-- 引入 Axios -->
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <!-- 引入 Vue -->
-<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+<!--<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>-->
+<script src="https://unpkg.com/vue@2.6.14/dist/vue.js"></script>
 <!-- 引入 Element 组件库 -->
 <script src="https://unpkg.com/element-ui/lib/index.js"></script>
 <script src="../js/home.js"></script>
+
 </body>
 </html>
