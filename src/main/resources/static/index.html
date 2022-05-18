@@ -10,36 +10,51 @@
 </head>
 <body>
 <div id="app">
-
-    <!-- 摄像区域 -->
+    <!-- 登录/注册 -->
     <template>
-        <el-row type="flex" justify="center">
+        <el-row type="flex" justify="center" align="middle">
             <el-col :span="12">
-                <!--canvas截取流-->
-                <canvas ref="canvas" width="640" height="480" style="display: none"></canvas>
-<!--                &lt;!&ndash;图片展示&ndash;&gt;-->
-                <video ref="video" width="640" height="480" autoplay></video>
+                <p style="text-align: center;font-size: 80px">M e e t i n g</p>
             </el-col>
         </el-row>
-        <el-row type="flex" justify="center">
-            <el-col :span="6">
-                <!--关闭摄像头-->
-<!--                <el-button type="success" plain @click="closeCamera">关闭摄像头</el-button>-->
-                <!--登录-->
-                <el-button type="info" plain @click="login">登录</el-button>
-                <!--注册-->
-                <el-button type="primary" plain @click="register">注册</el-button>
+        <!-- 登录 -->
+        <el-row type="flex" justify="center" align="middle">
+            <el-col :span="2">
+                <el-button type="primary" plain @click="login">刷 脸 登 录</el-button>
+            </el-col>
+        </el-row>
+        <br>
+        <!--注册-->
+        <el-row type="flex" justify="center" align="middle">
+            <el-col :span="2">
+                <el-button type="success" plain @click="register">人 脸 注 册</el-button>
             </el-col>
         </el-row>
     </template>
+
+    <!-- 拍照弹窗 -->
+    <el-dialog
+            title="Meeting"
+            :visible.sync="cameraDialogVisible"
+            @close="closeCamera"
+            center>
+        <!--canvas截取流-->
+        <canvas ref="canvas" width="640" height="480" style="display: none"></canvas>
+        <!-- 图片展示 -->
+        <video ref="video" width="100%" height="480" autoplay></video>
+        <span slot="footer" class="dialog-footer">
+    <el-button plain @click="cameraDialogVisible = false">取消</el-button>
+    <el-button plain type="primary" @click="photo">Go!</el-button>
+  </span>
+    </el-dialog>
 
     <!-- 注册弹窗 -->
     <el-dialog
             title="注册"
             :visible.sync="registerDialogVisible"
-            width="50%"
+            width="30%"
             center>
-
+        <!-- 注册表单 -->
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
             <el-form-item label="用户名" prop="name">
                 <el-input v-model="ruleForm.name"></el-input>
@@ -65,10 +80,14 @@
                     <el-radio label="女" value="女"></el-radio>
                 </el-radio-group>
             </el-form-item>
+            <el-form-item label="人脸录入" prop="base64">
+                <el-button plain @click="cameraDialog" v-model="ruleForm.base64">拍照录入</el-button>
+                <el-button plain type="file" v-model="ruleForm.base64">选择照片</el-button>
+            </el-form-item>
 
             <el-form-item>
-                <el-button type="primary" @click="submitForm('ruleForm')">注册</el-button>
-                <el-button @click="resetForm('ruleForm')">重置</el-button>
+                <el-button type="primary" plain @click="submitForm('ruleForm')">注 册</el-button>
+                <el-button plain @click="resetForm('ruleForm')">重 置</el-button>
             </el-form-item>
         </el-form>
 

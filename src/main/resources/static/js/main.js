@@ -5,12 +5,16 @@ $(function () {
             return {
                 // 注册表单弹层
                 registerDialogVisible: false,
+                // 相机弹窗
+                cameraDialogVisible: false,
+                loginBase64: '',
                 // 注册表单
                 ruleForm: {
                     name: '',
                     dept: '',
                     post: '',
-                    gender: ''
+                    gender: '',
+                    base64: ''
                 },
                 // 注册表单校验
                 rules: {
@@ -26,6 +30,9 @@ $(function () {
                     ],
                     gender: [
                         {required: true, message: '请选择性别', trigger: 'change'}
+                    ],
+                    base64: [
+                        {required: true, message: '请拍照或上传照片', trigger: 'input'}
                     ]
                 }
             }
@@ -42,52 +49,37 @@ $(function () {
                     // 实时拍照效果
                     this.$refs['video'].play();
                 }).catch(error => {
-                    this.$message.error('摄像头开启失败，请检查摄像头是否可用！')
+                    this.$message.error('摄像头开启失败，请检查摄像头是否可用！');
                 })
             },
             // 拍照
             photograph() {
-                let ctx = this.$refs['canvas'].getContext('2d')
+                let ctx = this.$refs['canvas'].getContext('2d');
                 // 把当前视频帧内容渲染到canvas上
-                ctx.drawImage(this.$refs['video'], 0, 0, 640, 480)
+                ctx.drawImage(this.$refs['video'], 0, 0, 640, 480);
                 // 转base64格式、图片格式转换、图片质量压缩---支持两种格式image/jpeg+image/png
-                let imgBase64 = this.$refs['canvas'].toDataURL('image/jpeg', 0.7)
-                console.log(imgBase64)
-                /**------------到这里为止，就拿到了base64位置的地址，后面是下载功能----------*/
-
-                    // 由字节转换为KB 判断大小
-                let str = imgBase64.replace('data:image/jpeg;base64,', '')
-                let strLength = str.length
-                let fileLength = parseInt(strLength - (strLength / 8) * 2)　　　 // 图片尺寸  用于判断
-                let size = (fileLength / 1024).toFixed(2)
-                console.log(size) 　　  // 上传拍照信息  调用接口上传图片 .........
-                //
-                // // 保存到本地
-                // let ADOM = document.createElement('a')
-                // ADOM.href = this.headImgSrc
-                // ADOM.download = new Date().getTime() + '.jpeg'
-                // ADOM.click()
+                let imgBase64 = this.$refs['canvas'].toDataURL('image/jpeg', 0.7);
+                this.ruleForm.base64 = imgBase64;
+                this.loginBase64 = imgBase64;
             },
             // 关闭摄像头
             closeCamera() {
-                if (!this.$refs['video'].srcObject) return
-                let stream = this.$refs['video'].srcObject
-                let tracks = stream.getTracks()
+                if (!this.$refs['video'].srcObject) return;
+                let stream = this.$refs['video'].srcObject;
+                let tracks = stream.getTracks();
                 tracks.forEach(track => {
-                    track.stop()
+                    track.stop();
                 })
-                this.$refs['video'].srcObject = null
+                this.$refs['video'].srcObject = null;
             },
             // 注册表单
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        // this.$message.success('注册成功 ^_^');
-                        // this.registerDialogVisible = false;
                         console.log(this.ruleForm)
                         console.log(formName)
                         console.log(valid)
-                        axios.post("/meeting", this.ruleForm).then((res) => {
+                        axios.post("/login", this.ruleForm).then((res) => {
                             if (res.data.flag) {
                                 this.registerDialogVisible = false;
                                 this.$message.success(res.data.msg);
@@ -96,15 +88,25 @@ $(function () {
                             }
                         })
                     } else {
-                        this.$message.error('请完善表单内容 :(')
+                        this.$message.error('请完善表单内容 :(');
                         return false;
                     }
                 });
             },
+            // 调用摄像头弹窗
+            cameraDialog() {
+                this.callCamera();
+                this.cameraDialogVisible = true;
+            },
+            // 拍照 Go!
+            photo() {
+              this.photograph();
+              this.cameraDialogVisible = false;
+              // console.log(this.loginBase64)
+            },
             // 登录按钮
             login() {
-                this.photograph();
-
+                this.cameraDialog();
             },
             // 注册按钮
             register() {
@@ -112,13 +114,11 @@ $(function () {
             },
             resetForm(formName) {
                 this.$refs[formName].resetFields();
+            },
+            // 弹窗关闭事件
+            closeDialog() {
+                this.closeCamera();
             }
-        },
-        mounted() {
-            this.callCamera();
-        },
-        destroy() {
-            this.closeCamera();
         }
     });
 

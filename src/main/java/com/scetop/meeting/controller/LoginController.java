@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/meeting")
+@RequestMapping("/login")
 public class LoginController {
 
     @Autowired
@@ -18,15 +18,15 @@ public class LoginController {
 
     // 注册业务
     @PostMapping
-    public R login(@RequestBody User user) {
-//        String hex = FaceService.add(image, "1", "hex");
+    public R registerUser(@RequestBody User user) {
+        System.out.println(user.getBase64());
         boolean flag = userServer.save(user);
-        return new R(flag,null,flag ? "添加成功^_^" : "添加失败-_-!");
+        return new R(flag,null,flag ? "注册成功^_^" : "注册失败-_-!");
     }
 
     @GetMapping
-    public R queryAll() {
-        List<User> userList = userServer.list();
-        return new R(true, userList, null);
+    public R loginUser(@RequestBody String loginBase64) {
+        System.out.println(loginBase64);
+        return new R(true,null, "服务器收到位图");
     }
 }
