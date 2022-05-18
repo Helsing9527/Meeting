@@ -1,5 +1,6 @@
-package com.scetop.meeting.controller.util;
+package com.scetop.meeting.controller;
 
+import com.scetop.meeting.controller.util.R;
 import com.scetop.meeting.pojo.User;
 import com.scetop.meeting.server.IUserServer;
 import org.springframework.beans.factory.annotation.Autowired;

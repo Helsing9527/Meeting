@@ -1,16 +1,13 @@
 package com.scetop.meeting.controller;
 
 import com.scetop.meeting.controller.util.R;
-import com.scetop.meeting.face.FaceService;
 import com.scetop.meeting.pojo.User;
 import com.scetop.meeting.server.IUserServer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/login")
+@RequestMapping(value = "/index")
 public class LoginController {
 
     @Autowired
@@ -24,9 +21,12 @@ public class LoginController {
         return new R(flag,null,flag ? "注册成功^_^" : "注册失败-_-!");
     }
 
-    @GetMapping
+    @PostMapping("/login")
     public R loginUser(@RequestBody String loginBase64) {
         System.out.println(loginBase64);
-        return new R(true,null, "服务器收到位图");
+        if (loginBase64.length() > 0) {
+            return new R(true,null, "服务器收到位图");
+        }
+        return new R(false, null, "服务器未收到位图");
     }
 }

@@ -19,15 +19,23 @@
         </el-row>
         <!-- 登录 -->
         <el-row type="flex" justify="center" align="middle">
-            <el-col :span="2">
+            <el-col :span="5">
                 <el-button type="primary" plain @click="login">刷 脸 登 录</el-button>
+                <el-button type="success" plain @click="register">人 脸 注 册</el-button>
             </el-col>
         </el-row>
         <br>
         <!--注册-->
+<!--        <el-row type="flex" justify="center" align="middle">-->
+<!--            <el-col :span="2">-->
+<!--                <el-button type="success" plain @click="register">人 脸 注 册</el-button>-->
+<!--            </el-col>-->
+<!--        </el-row>-->
+        <!-- 人脸采集 -->
         <el-row type="flex" justify="center" align="middle">
-            <el-col :span="2">
-                <el-button type="success" plain @click="register">人 脸 注 册</el-button>
+            <el-col :span="12">
+                <video ref="video" width="100%" height="480" autoplay></video>
+                <canvas ref="canvas" width="640" height="480" style="display: none"></canvas>
             </el-col>
         </el-row>
     </template>
@@ -39,7 +47,7 @@
             @close="closeCamera"
             center>
         <!--canvas截取流-->
-        <canvas ref="canvas" width="640" height="480" style="display: none"></canvas>
+<!--        <canvas ref="canvas" width="640" height="480" style="display: none"></canvas>-->
         <!-- 图片展示 -->
         <video ref="video" width="100%" height="480" autoplay></video>
         <span slot="footer" class="dialog-footer">

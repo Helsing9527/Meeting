@@ -1,12 +1,14 @@
 package com.scetop.meeting.face;
+
 import com.baidu.aip.face.AipFace;
 import org.json.JSONObject;
-import org.testng.annotations.Test;
+
 import java.util.HashMap;
 
 public class FaceService {
 
-  public static final  AipFace client=new AipFace("26237537","Mui6MglWSqVVwQImqWkfo0PO","4Z0RuBnok5VIMIuq9fQsHYbsBsfDr436");
+    public static final AipFace client = new AipFace("26237537", "Mui6MglWSqVVwQImqWkfo0PO", "4Z0RuBnok5VIMIuq9fQsHYbsBsfDr436");
+
     //人脸库注册
     public static String add(String image, String userId) {
         // 传入可选参数调用接口
@@ -25,8 +27,8 @@ public class FaceService {
 
         return res.toString();
     }
+
     //    人脸搜索
-    @Test
     public static String serche(String image) {
         // 传入可选参数调用接口
         HashMap<String, Object> options = new HashMap<String, Object>();

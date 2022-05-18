@@ -79,7 +79,7 @@ $(function () {
                         console.log(this.ruleForm)
                         console.log(formName)
                         console.log(valid)
-                        axios.post("/login", this.ruleForm).then((res) => {
+                        axios.post("/index", {"loginBase64": this.loginBase64}).then((res) => {
                             if (res.data.flag) {
                                 this.registerDialogVisible = false;
                                 this.$message.success(res.data.msg);
@@ -102,11 +102,14 @@ $(function () {
             photo() {
               this.photograph();
               this.cameraDialogVisible = false;
-              // console.log(this.loginBase64)
+              console.log(this.loginBase64);
             },
             // 登录按钮
             login() {
-                this.cameraDialog();
+                // this.cameraDialog();
+                this.photo();
+                axios.post("/index/login", this.loginBase64).then((res) => {
+                })
             },
             // 注册按钮
             register() {
@@ -119,6 +122,10 @@ $(function () {
             closeDialog() {
                 this.closeCamera();
             }
+        },
+        created() {
+            this.callCamera()
+            console.log('启动摄像头')
         }
     });
 
