@@ -13,8 +13,9 @@ public class User {
     private String name;
     private String dept;
     private String post;
-    private String gender;
-    // Base64不存入数据库
+    private Long gender;
     @TableField(exist = false)
     private String base64;
+    @TableField(exist = false)
+    private String faceId;
 }

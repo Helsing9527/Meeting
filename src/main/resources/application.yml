@@ -16,3 +16,6 @@ mybatis-plus:
   global-config:
     db-config:
       id-type: auto
+
+SecretId: AKIDYuznLcbJkunPkpc8NL2TcXEfpiLhncBT
+SecretKey: 4sTosfBIBn7BxQddMozsWtymJZYGhrkM
