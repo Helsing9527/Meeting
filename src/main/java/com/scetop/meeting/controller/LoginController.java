@@ -1,12 +1,16 @@
 package com.scetop.meeting.controller;
 
 import com.scetop.meeting.controller.tencentapi.CreatePerson;
+import com.scetop.meeting.controller.tencentapi.GetPersonList;
+import com.scetop.meeting.controller.tencentapi.VerifyFace;
 import com.scetop.meeting.controller.util.R;
 import com.scetop.meeting.pojo.Base64;
 import com.scetop.meeting.pojo.User;
 import com.scetop.meeting.server.IUserServer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/index")
@@ -17,6 +21,12 @@ public class LoginController {
 
     @Autowired
     private CreatePerson createPerson;
+
+    @Autowired
+    private GetPersonList getPersonList;
+
+    @Autowired
+    private VerifyFace verifyFace;
 
     // 注册业务
     // 待解决bug:同一人重复注册问题/健壮性问题
@@ -41,7 +51,27 @@ public class LoginController {
     @PostMapping("/login")
     public R loginUser(@RequestBody Base64 loginBase64) {
         System.out.println(loginBase64.getLoginBase64());
-        System.out.println(loginBase64.getLoginBase64().length() / 1024);
-        return new R(true, null, "服务器收到位图");
+        // 校验图片大小大于10k，小于10k返回登录失败
+        if (loginBase64.getLoginBase64().length() / 1024 >= 10) {
+            int userId = 0;
+            // 获取人员库所有人员id
+            List<String> personList = getPersonList.getPersonList();
+            // 便利调用验证人员
+            for (String personId : personList) {
+                Boolean flag = verifyFace.verifyFace(loginBase64.getLoginBase64(), personId);
+                // 匹配人员返回人员id
+                if (flag) {
+                    userId = Integer.parseInt(personId);
+                    break;
+                }
+            }
+            // 人员库内匹配登录人员，登录成功
+            if (userId != 0) {
+                return new R(true, null, "登录成功，即将跳转 ^_^");
+            }
+//            System.out.println(userId);
+            return new R(false, null, "登录失败，请重新登录 -_-||");
+        }
+        return new R(false, null, "登录失败，图片异常，请重新登录 -_-||");
     }
 }

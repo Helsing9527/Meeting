@@ -109,6 +109,11 @@ $(function () {
             login() {
                 this.photo();
                 axios.post("/index/login", {"loginBase64": this.loginBase64}).then((res) => {
+                    if (res.data.flag) {
+                        this.$message.success(res.data.msg);
+                    } else {
+                        this.$message.error(res.data.msg);
+                    }
                 })
             },
             // 注册按钮
@@ -124,7 +129,7 @@ $(function () {
             },
 
             // 覆盖默认的上传行为，可以自定义上传的实现
-            httpRequest(data){
+            httpRequest(data) {
                 // 转base64
                 this.getBase64(data.file).then(resBase64 => {
                     //直接拿到base64信息
@@ -132,27 +137,27 @@ $(function () {
                     this.ruleForm.base64 = this.fileBase64;
                 })
                 var that = this
-                setTimeout(function(){
+                setTimeout(function () {
                     that.uploadPercent = 100
-                },2000)
+                }, 2000)
             },
             // 转base64编码
-            getBase64(file){
+            getBase64(file) {
                 this.dialogVisible = false
                 return new Promise((resolve, reject) => {
                     let reader = new FileReader();
                     let fileResult = "";
                     reader.readAsDataURL(file);
                     //开始转
-                    reader.onload = function() {
+                    reader.onload = function () {
                         fileResult = reader.result;
                     };
                     //转失败
-                    reader.onerror = function(error) {
+                    reader.onerror = function (error) {
                         reject(error);
                     };
                     //转结束咱就 resolve 出去
-                    reader.onloadend = function() {
+                    reader.onloadend = function () {
                         resolve(fileResult);
                     };
                 });
