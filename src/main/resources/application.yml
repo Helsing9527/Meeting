@@ -10,6 +10,13 @@ spring:
       url: jdbc:mysql:///meeting?setTimezone=UTC
       username: root
       password: root
+  thymeleaf:
+#    prefix: /pages/
+#    suffix: .html
+    servlet:
+      content-type: text/html
+    mode: HTML5
+    encoding: UTF-8
 
 #设置id使用数据库id自增
 mybatis-plus:
@@ -17,5 +24,6 @@ mybatis-plus:
     db-config:
       id-type: auto
 
+#腾讯 SecretId/SecretKey
 SecretId: AKIDYuznLcbJkunPkpc8NL2TcXEfpiLhncBT
 SecretKey: 4sTosfBIBn7BxQddMozsWtymJZYGhrkM

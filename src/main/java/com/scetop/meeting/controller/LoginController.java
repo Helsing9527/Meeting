@@ -1,8 +1,8 @@
 package com.scetop.meeting.controller;
 
-import com.scetop.meeting.controller.tencentapi.CreatePerson;
-import com.scetop.meeting.controller.tencentapi.GetPersonList;
-import com.scetop.meeting.controller.tencentapi.VerifyFace;
+import com.scetop.meeting.tencentapi.CreatePerson;
+import com.scetop.meeting.tencentapi.GetPersonList;
+import com.scetop.meeting.tencentapi.VerifyFace;
 import com.scetop.meeting.controller.util.R;
 import com.scetop.meeting.pojo.Base64;
 import com.scetop.meeting.pojo.User;
@@ -48,9 +48,9 @@ public class LoginController {
         return new R(false, null, "注册失败-_-!");
     }
 
+    // 人脸识别登录
     @PostMapping("/login")
     public R loginUser(@RequestBody Base64 loginBase64) {
-        System.out.println(loginBase64.getLoginBase64());
         // 校验图片大小大于10k，小于10k返回登录失败
         if (loginBase64.getLoginBase64().length() / 1024 >= 10) {
             int userId = 0;
@@ -67,7 +67,8 @@ public class LoginController {
             }
             // 人员库内匹配登录人员，登录成功
             if (userId != 0) {
-                return new R(true, null, "登录成功，即将跳转 ^_^");
+                User user = userServer.getById(userId);
+                return new R(true, user, "登录成功，即将跳转 ^_^");
             }
 //            System.out.println(userId);
             return new R(false, null, "登录失败，请重新登录 -_-||");
