@@ -13,7 +13,7 @@ public class LoginSuccessController {
         System.out.println(user);
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("user", user);
-        modelAndView.setViewName("redirect:pages/home.html");
+        modelAndView.setViewName("redirect:/pages/home.html");
         return modelAndView;
     }
 

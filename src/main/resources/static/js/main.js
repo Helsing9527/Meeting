@@ -112,10 +112,7 @@ $(function () {
                         // 登录成功
                         this.$message.success(res.data.msg);
                         console.log(res.data.data)
-                        axios.get("/success", res.data.data).then((res) => {
-                            console.log(res.data)
-                            console.log(typeof res.data)
-                        })
+                        success();
                         // success(res.data.data)
                     } else {
                         // 登录失败
@@ -176,7 +173,10 @@ $(function () {
         }
     });
 
-    // function success (data) {
-    //     window.location.href = "pages/home.html?data="+ data;
-    // }
+
+    function success () {
+        // window.location.href = "pages/home.html";
+        axios.get(window.location.href="/success", res.data.data).then((res) => {
+        })
+    }
 });
