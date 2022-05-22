@@ -25,7 +25,8 @@
                         </el-col>
                     </el-row>
                     <el-row type="flex" justify="center">
-                        <el-col :span="6">{{fit}}</el-col>
+<!--                        <el-col :span="6">{{fit}}</el-col>-->
+                        <el-col :span="6"><p th:text="${param.id}" v-model="fit"></p> </el-col>
                     </el-row>
                 </div>
                 <!--导航项-->
@@ -48,8 +49,7 @@
             </el-menu>
         </el-col>
         <!--欢迎页-->
-        <el-calendar v-model="value" v-if="index == 1">
-        </el-calendar>
+        <el-calendar v-model="value" v-if="index == 1"></el-calendar>
         <!--会议申请-->
         <el-col :xs="24" :sm="18" :md="22" :lg="24" v-if="index == 2">
             <template>
