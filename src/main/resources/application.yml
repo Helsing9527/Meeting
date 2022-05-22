@@ -9,7 +9,7 @@ spring:
       driver-class-name: com.mysql.cj.jdbc.Driver
       url: jdbc:mysql:///meeting?setTimezone=UTC
       username: root
-      password: 123456
+      password: root
   thymeleaf:
 #    prefix: /pages/
 #    suffix: .html
@@ -17,12 +17,7 @@ spring:
       content-type: text/html
     mode: HTML5
     encoding: UTF-8
-mvc:
-  pathmatch:
-    use-suffix-pattern: false
-    use-registered-suffix-pattern: true
-  contentnegotiation:
-    favor-path-extension: false
+
 #设置id使用数据库id自增
 mybatis-plus:
   global-config:
@@ -32,5 +27,3 @@ mybatis-plus:
 #腾讯 SecretId/SecretKey
 SecretId: AKIDYuznLcbJkunPkpc8NL2TcXEfpiLhncBT
 SecretKey: 4sTosfBIBn7BxQddMozsWtymJZYGhrkM
-
-

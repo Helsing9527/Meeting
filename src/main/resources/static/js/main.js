@@ -111,9 +111,7 @@ $(function () {
                     if (res.data.flag) {
                         // 登录成功
                         this.$message.success(res.data.msg);
-                        console.log(res.data.data)
-                        success();
-                        // success(res.data.data)
+                        axios.post(window.location.href = "/success/" + res.data.data.id);
                     } else {
                         // 登录失败
                         this.$message.error(res.data.msg);
@@ -169,14 +167,6 @@ $(function () {
         },
         created() {
             this.callCamera()
-            console.log('启动摄像头')
         }
     });
-
-
-    function success () {
-        // window.location.href = "pages/home.html";
-        axios.get(window.location.href="/success", res.data.data).then((res) => {
-        })
-    }
 });

@@ -46,6 +46,9 @@ $(function () {
             handleCurrentChange(val) {
                 console.log(`当前页: ${val}`);
             }
+        },
+        created() {
+            console.log(this.$route.query.id)
         }
     });
 
