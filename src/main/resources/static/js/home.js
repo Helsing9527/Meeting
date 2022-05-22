@@ -1,5 +1,4 @@
 $(function () {
-    // import {axios} from "./axios.min.js";
     new Vue({
         el: "#app",
         data() {
@@ -7,7 +6,7 @@ $(function () {
                 index: '1',
                 value: new Date(),
                 // 用户名
-                fit: '用户名',
+                fit: '',
                 // 用户头像
                 url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
                 tableData: [],
@@ -47,10 +46,10 @@ $(function () {
                 console.log(`当前页: ${val}`);
             }
         },
-        created() {
-            console.log(this.$route.query.id)
+        mounted() {
+            axios.get("/meeting/userInfo/" + window.location.search.substr(1)).then((res) => {
+                this.fit = res.data.data.name;
+            })
         }
     });
-
-
 })

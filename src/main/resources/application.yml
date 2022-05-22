@@ -7,16 +7,14 @@ spring:
   datasource:
     druid:
       driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql:///meeting?setTimezone=UTC
+      url: jdbc:mysql:///meeting?setTimezone=Aisa/shanghai
       username: root
       password: root
   thymeleaf:
-#    prefix: /pages/
-#    suffix: .html
+    mode: HTML
+    encoding: UTF-8
     servlet:
       content-type: text/html
-    mode: HTML5
-    encoding: UTF-8
 
 #设置id使用数据库id自增
 mybatis-plus:
