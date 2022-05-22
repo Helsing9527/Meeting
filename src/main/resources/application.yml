@@ -15,6 +15,8 @@ spring:
     encoding: UTF-8
     servlet:
       content-type: text/html
+    enabled: true
+    cache: false
 
 #设置id使用数据库id自增
 mybatis-plus:

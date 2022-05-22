@@ -10,8 +10,7 @@ public class LoginSuccessController {
     @RequestMapping("/success/{id}")
     public ModelAndView home(@PathVariable(name = "id") String id) {
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject("id", id);
-        modelAndView.setViewName("redirect:/pages/home.html");
+        modelAndView.setViewName("redirect:/pages/home.html?" + id);
         return modelAndView;
     }
 
