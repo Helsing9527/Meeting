@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/meeting")
+@RequestMapping("/meeting.do")
 public class MeetingController {
     @Autowired
     private IUserServer userServer;

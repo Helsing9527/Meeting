@@ -1,5 +1,6 @@
 package com.scetop.meeting.controller;
 
+import com.scetop.meeting.controller.Contants.Contants;
 import com.scetop.meeting.tencentapi.CreatePerson;
 import com.scetop.meeting.tencentapi.GetPersonList;
 import com.scetop.meeting.tencentapi.VerifyFace;
@@ -10,6 +11,7 @@ import com.scetop.meeting.server.IUserServer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @RestController
@@ -50,7 +52,7 @@ public class LoginController {
 
     // 人脸识别登录
     @PostMapping("/login")
-    public R loginUser(@RequestBody Base64 loginBase64) {
+    public R loginUser(@RequestBody Base64 loginBase64,HttpSession session) {
         // 校验图片大小大于10k，小于10k返回登录失败
         if (loginBase64.getLoginBase64().length() / 1024 >= 10) {
             int userId = 0;
@@ -68,6 +70,7 @@ public class LoginController {
             // 人员库内匹配登录人员，登录成功
             if (userId != 0) {
                 User user = userServer.getById(userId);
+                session.setAttribute("Contants", Contants.user_info);
                 return new R(true, user, "登录成功，即将跳转 ^_^");
             }
 //            System.out.println(userId);
