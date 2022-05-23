@@ -111,7 +111,7 @@ $(function () {
                     if (res.data.flag) {
                         // 登录成功
                         this.$message.success(res.data.msg);
-                        axios.post(window.location.href = "/success/" + res.data.data.id);
+                        axios.post("/home/" + res.data.data.id);
                     } else {
                         // 登录失败
                         this.$message.error(res.data.msg);

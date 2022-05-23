@@ -40,9 +40,6 @@
             :visible.sync="cameraDialogVisible"
             @close="closeCamera"
             center>
-        <!--canvas截取流-->
-        <!--        <canvas ref="canvas" width="640" height="480" style="display: none"></canvas>-->
-        <!-- 图片展示 -->
         <video ref="video" width="100%" height="480" autoplay></video>
         <span slot="footer" class="dialog-footer">
     <el-button plain @click="cameraDialogVisible = false">取消</el-button>
@@ -90,7 +87,7 @@
                         ref="upload"
                         action="#"
                         :http-request="httpRequest"
-                        >
+                >
                     <el-button type="primary" plain>选择照片</el-button>
 
                 </el-upload>

@@ -1,5 +1,8 @@
 package com.scetop.meeting.server.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.scetop.meeting.mapper.UserMapper;
 import com.scetop.meeting.pojo.User;
@@ -15,5 +18,12 @@ public class UserServerImpl extends ServiceImpl<UserMapper, User> implements IUs
     @Override
     public Boolean saveFaceId(String faceId, Integer id) {
         return userMapper.saveFaceId(faceId, id);
+    }
+
+    @Override
+    public IPage<User> getPage(Integer currentPage, Integer pageSize) {
+        IPage<User> page = new Page<>(currentPage, pageSize);
+        userMapper.selectPage(page,null);
+        return page;
     }
 }

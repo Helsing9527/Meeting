@@ -15,8 +15,11 @@ spring:
     encoding: UTF-8
     servlet:
       content-type: text/html
+    prefix: classpath:/templates/
+    suffix: .html
+    cache: false
 
-#设置id使用数据库id自增
+#配置 Mybatis Plus
 mybatis-plus:
   global-config:
     db-config:

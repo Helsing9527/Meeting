@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link rel="icon" type="image/png" href="../image/favicon.png">
+    <link rel="icon" type="image/png" href="/image/favicon.png">
     <!-- 引入 Element 样式 -->
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
-    <link rel="stylesheet" href="../css/home.css">
+    <link rel="stylesheet" href="/css/home.css">
 </head>
 <body>
 <div id="app">
@@ -25,7 +25,7 @@
                         </el-col>
                     </el-row>
                     <el-row type="flex" justify="center">
-                        <el-col :span="6">{{fit}}</el-col>
+                        <el-col :span="6"><p th:text="${userName}"></p> </el-col>
                     </el-row>
                 </div>
                 <!--导航项-->
@@ -52,44 +52,30 @@
         <!--会议申请-->
         <el-col :xs="24" :sm="18" :md="22" :lg="24" v-if="index == 2">
             <template>
+                <!-- 人员列表 -->
                 <el-table
                         :data="tableData"
                         style="width: 100%"
                         :row-class-name="tableRowClassName"
                         @selection-change="handleSelectionChange">
-                    <el-table-column
-                            type="selection"
-                            width="55">
-                    </el-table-column>
-                    <el-table-column
-                            prop="name"
-                            label="姓名">
-                    </el-table-column>
-                    <el-table-column
-                            prop="dept"
-                            label="部门">
-                    </el-table-column>
-                    <el-table-column
-                            prop="post"
-                            label="部门">
-                    </el-table-column>
-                    <el-table-column
-                            prop="gender"
-                            label="性别">
-                    </el-table-column>
+                    <el-table-column type="selection" width="55"></el-table-column>
+                    <el-table-column prop="name" label="姓名"></el-table-column>
+                    <el-table-column prop="dept" label="部门"></el-table-column>
+                    <el-table-column prop="post" label="部门"></el-table-column>
+                    <el-table-column prop="gender" label="性别"></el-table-column>
                 </el-table>
-
+                <!-- 分页工具 -->
                 <el-row type="flex" justify="start">
                     <el-col :span="14">
                         <el-pagination
                                 @size-change="handleSizeChange"
                                 @current-change="handleCurrentChange"
-                                :current-page="currentPage"
-                                :page-sizes="[10, 20, 30, 40]"
-                                :page-size="10"
+                                :current-page="pagination.currentPage"
+                                :page-sizes="[10, 25, 50, 100]"
+                                :page-size="pagination.pageSize"
                                 background
                                 layout="total, sizes, prev, pager, next, jumper"
-                                :total="50">
+                                :total="pagination.total">
                         </el-pagination>
                     </el-col>
                 </el-row>
@@ -120,7 +106,7 @@
 <script src="https://unpkg.com/vue@2.6.14/dist/vue.js"></script>
 <!-- 引入 Element 组件库 -->
 <script src="https://unpkg.com/element-ui/lib/index.js"></script>
-<script src="../js/home.js"></script>
+<script src="/js/home.js"></script>
 
 </body>
 </html>

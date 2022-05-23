@@ -1,6 +1,5 @@
 package com.scetop.meeting.controller;
 
-import com.scetop.meeting.controller.Contants.Contants;
 import com.scetop.meeting.tencentapi.CreatePerson;
 import com.scetop.meeting.tencentapi.GetPersonList;
 import com.scetop.meeting.tencentapi.VerifyFace;
@@ -70,10 +69,8 @@ public class LoginController {
             // 人员库内匹配登录人员，登录成功
             if (userId != 0) {
                 User user = userServer.getById(userId);
-                session.setAttribute("Contants", Contants.user_info);
                 return new R(true, user, "登录成功，即将跳转 ^_^");
             }
-//            System.out.println(userId);
             return new R(false, null, "登录失败，请重新登录 -_-||");
         }
         return new R(false, null, "登录失败，图片异常，请重新登录 -_-||");
