@@ -14,6 +14,7 @@ public class PagesController {
     @Autowired
     private IUserServer userServer;
 
+    // 跳转登录成功页
     @RequestMapping("/home/{id}")
     public ModelAndView home(@PathVariable(name = "id") String id) {
         User user = userServer.getById(id);

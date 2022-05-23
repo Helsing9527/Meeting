@@ -38,7 +38,7 @@ public class GetPersonList {
             // 返回的resp是一个GetPersonListResponse的实例，与请求对象对应
             GetPersonListResponse resp = client.GetPersonList(req);
             // 输出json格式的字符串回包
-            System.out.println(GetPersonListResponse.toJsonString(resp));
+//            System.out.println(GetPersonListResponse.toJsonString(resp));
             // 遍历人员列表
             PersonInfo[] personInfos = resp.getPersonInfos();
             for (PersonInfo personInfo : personInfos) {

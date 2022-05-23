@@ -5,10 +5,7 @@ import com.scetop.meeting.controller.util.R;
 import com.scetop.meeting.pojo.User;
 import com.scetop.meeting.server.IUserServer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -32,5 +29,11 @@ public class MeetingController {
         User user = userServer.getById(id);
         System.out.println(user);
         return new R(true, user, null);
+    }
+
+    @PostMapping
+    public R createMeeting() {
+        System.out.println();
+        return new R(true,null, "会议创建成功");
     }
 }

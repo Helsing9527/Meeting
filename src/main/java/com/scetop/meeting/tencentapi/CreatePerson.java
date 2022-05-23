@@ -60,7 +60,7 @@ public class CreatePerson {
             // 返回的resp是一个CreatePersonResponse的实例，与请求对象对应
             CreatePersonResponse resp = client.CreatePerson(req);
             // 输出json格式的字符串回包
-            System.out.println(CreatePersonResponse.toJsonString(resp));
+//            System.out.println(CreatePersonResponse.toJsonString(resp));
             return resp.getFaceId();
         } catch (TencentCloudSDKException e) {
             System.out.println(e.toString());
