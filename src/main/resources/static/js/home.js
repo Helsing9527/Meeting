@@ -56,6 +56,7 @@ $(function () {
                 meetingList: [],
                 // 会议列表 编辑
                 editDialogVisible: false,
+                admin: ''
             };
         },
         methods: {

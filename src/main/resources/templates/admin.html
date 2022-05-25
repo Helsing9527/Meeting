@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>主页</title>
+    <link rel="icon" type="image/png" href="/image/favicon.png">
+    <!-- 引入 Element 样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="/css/home.css">
+</head>
+<body>
+<div id="app">
+    <el-row type="flex">
+        <!--导航-->
+        <el-col :xs="24" :sm="8" :md="5" :lg="4">
+            <el-menu
+                    default-active="1"
+                    class="el-menu-vertical-demo"
+                    @open="handleOpen"
+                    @close="handleClose">
+                <!--登录成功回显用户信息-->
+                <div class="demo-image">
+                    <el-row type="flex" justify="center">
+                        <el-col :span="12">
+                            <el-image
+                                    style="width: 100px; height: 100px"
+                                    :src="url"
+                            ></el-image>
+                        </el-col>
+                    </el-row>
+                    <el-row type="flex" justify="center">
+                        <el-col :span="6"><p th:text="${userName}"></p></el-col>
+                    </el-row>
+                </div>
+                <el-menu-item index="1" @click="setIndex(1)">
+                    <i class="el-icon-menu"></i>
+                    <span slot="title">欢迎页</span>
+                </el-menu-item>
+                <el-submenu index="2">
+                    <template slot="title">
+                        <i class="el-icon-chat-dot-square"></i>
+                        <span>会议管理</span>
+                    </template>
+                    <el-menu-item-group>
+                        <el-menu-item index="1-1" @click="meetingApply">会议申请</el-menu-item>
+                        <el-menu-item index="1-2" @click="meetingManagerList">会议列表</el-menu-item>
+                    </el-menu-item-group>
+                </el-submenu>
+                <el-submenu index="3">
+                    <template slot="title">
+                        <i class="el-icon-user"></i>
+                        <span>人员管理</span>
+                    </template>
+                    <el-menu-item-group>
+                        <el-menu-item index="2-1" @click="setIndex(4)">人员库管理</el-menu-item>
+                        <el-menu-item index="2-2" @click="setIndex(5)">人员管理</el-menu-item>
+                    </el-menu-item-group>
+                </el-submenu>
+                <el-menu-item index="4" @click="setIndex(6)">
+                    <i class="el-icon-data-line"></i>
+                    <span slot="title">开始会议</span>
+                </el-menu-item>
+                <el-menu-item index="5" @click="setIndex(7)">
+                    <i class="el-icon-setting"></i>
+                    <span slot="title">设置</span>
+                </el-menu-item>
+            </el-menu>
+        </el-col>
+        <!--欢迎页-->
+        <el-calendar v-model="value" v-if="index == 1"></el-calendar>
+        <!--判断是否为管理员，管理员开放管理权限-->
+        <!--会议申请-->
+        <el-col v-if="index == 2">
+            <template>
+                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+                    <el-form-item label="会议名称" prop="meetingName">
+                        <el-input v-model="ruleForm.meetingName"></el-input>
+                    </el-form-item>
+                    <el-form-item label="会议地点" prop="meetingPlace">
+                        <el-select v-model="ruleForm.meetingPlace" placeholder="请选择会议室">
+                            <el-option label="会议室(一)" value="会议室(一)"></el-option>
+                            <el-option label="会议室(二)" value="会议室(二)"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="会议时间" prop="meetingTime">
+                        <el-date-picker
+                                v-model="ruleForm.meetingTime"
+                                type="datetime"
+                                placeholder="选择日期时间">
+                        </el-date-picker>
+                    </el-form-item>
+                    <el-form-item label="会议内容" prop="meetingDesc">
+                        <el-input type="textarea" v-model="ruleForm.meetingDesc"></el-input>
+                    </el-form-item>
+                    <el-form-item label="参会人员" prop="persons">
+                        <el-button type="primary" plain @click="selectPersons" v-model="ruleForm.persons">选择参会人员
+                        </el-button>
+                        <!-- 选择参会人员 -->
+                        <el-dialog
+                                title="选择参会人员"
+                                :visible.sync="personsDialogVisible"
+                                width="70%"
+                                center>
+                            <template>
+                                <!-- 人员列表 -->
+                                <el-table
+                                        :data="tableData"
+                                        style="width: 100%"
+                                        :row-class-name="tableRowClassName"
+                                        :row-key="(row) => {return row.id}"
+                                        @selection-change="handleSelectionChange">
+                                    <el-table-column type="selection" width="55"
+                                                     :reserve-selection="true"></el-table-column>
+                                    <el-table-column prop="name" label="姓名"></el-table-column>
+                                    <el-table-column prop="dept" label="部门"></el-table-column>
+                                    <el-table-column prop="post" label="部门"></el-table-column>
+                                    <el-table-column prop="gender" label="性别"></el-table-column>
+                                </el-table>
+                                <!-- 分页工具 -->
+                                <el-row type="flex" justify="start">
+                                    <el-col :span="14">
+                                        <el-pagination
+                                                @size-change="handleSizeChange"
+                                                @current-change="handleCurrentChange"
+                                                :current-page="pagination.currentPage"
+                                                :page-sizes="[10, 25, 50, 100]"
+                                                :page-size="pagination.pageSize"
+                                                background
+                                                layout="total, sizes, prev, pager, next, jumper"
+                                                :total="pagination.total">
+                                        </el-pagination>
+                                    </el-col>
+                                </el-row>
+                            </template>
+
+                            <span slot="footer" class="dialog-footer">
+                            <el-button type="primary" @click="selectPerson">确 定</el-button>
+                        </span>
+                        </el-dialog>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="success" plain @click="submitForm('ruleForm')">创建会议</el-button>
+                        <el-button plain @click="resetForm('ruleForm')">重置</el-button>
+                    </el-form-item>
+                </el-form>
+            </template>
+        </el-col>
+        <!-- 会议列表 -->
+        <el-col v-if="index == 3">
+            <template>
+                <el-table
+                        :data="meetingList"
+                        style="width: 100%"
+                        :row-class-name="tableRowClassName">
+                    <el-table-column align="center"
+                                     prop="meetingName"
+                                     label="会议名称">
+                    </el-table-column>
+                    <el-table-column align="center"
+                                     prop="meetingPlace"
+                                     label="会议地点">
+                    </el-table-column>
+                    <el-table-column align="center"
+                                     prop="meetingTime"
+                                     label="会议时间">
+                    </el-table-column>
+                    <el-table-column align="center"
+                                     prop="meetingDesc"
+                                     label="会议内容">
+                    </el-table-column>
+                    <el-table-column align="center"
+                                     prop="persons"
+                                     label="参会人员">
+                    </el-table-column>
+                    <el-table-column align="center"
+                                     prop="status"
+                                     label="会议状态">
+                    </el-table-column>
+                    <el-table-column label="操作" align="center">
+                        <template slot-scope="scope">
+                            <el-button
+                                    size="mini"
+                                    @click="handleEdit(scope.row)">编辑
+                            </el-button>
+                            <el-button
+                                    size="mini"
+                                    type="danger"
+                                    @click="handleDelete(scope.row)">删除
+                            </el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </template>
+            <!-- 编辑 -->
+            <el-dialog
+                    title="编辑"
+                    :visible.sync="editDialogVisible"
+                    width="50%"
+                    center>
+                <template>
+                    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px"
+                             class="demo-ruleForm">
+                        <el-form-item label="会议名称" prop="meetingName">
+                            <el-input v-model="ruleForm.meetingName"></el-input>
+                        </el-form-item>
+                        <el-form-item label="会议地点" prop="meetingPlace">
+                            <el-select v-model="ruleForm.meetingPlace" placeholder="请选择会议室">
+                                <el-option label="会议室(一)" value="会议室(一)"></el-option>
+                                <el-option label="会议室(二)" value="会议室(二)"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="会议时间" prop="meetingTime">
+                            <el-date-picker
+                                    v-model="ruleForm.meetingTime"
+                                    type="datetime"
+                                    value-format="timestamp"
+                                    placeholder="选择日期时间">
+                            </el-date-picker>
+                        </el-form-item>
+                        <el-form-item label="会议内容" prop="meetingDesc">
+                            <el-input type="textarea" v-model="ruleForm.meetingDesc"></el-input>
+                        </el-form-item>
+                        <el-form-item label="参会人员" prop="persons">
+                            <el-button type="primary" plain @click="selectPersons" v-model="ruleForm.persons">选择参会人员
+                            </el-button>
+                            <!-- 选择参会人员 -->
+                            <el-dialog
+                                    title="选择参会人员"
+                                    :visible.sync="personsDialogVisible"
+                                    width="70%"
+                                    center>
+                                <template>
+                                    <!-- 人员列表 -->
+                                    <el-table
+                                            :data="tableData"
+                                            style="width: 100%"
+                                            :row-class-name="tableRowClassName"
+                                            :row-key="(row) => {return row.id}"
+                                            @selection-change="handleSelectionChange">
+                                        <el-table-column type="selection" width="55"
+                                                         :reserve-selection="true"></el-table-column>
+                                        <el-table-column prop="name" label="姓名"></el-table-column>
+                                        <el-table-column prop="dept" label="部门"></el-table-column>
+                                        <el-table-column prop="post" label="部门"></el-table-column>
+                                        <el-table-column prop="gender" label="性别"></el-table-column>
+                                    </el-table>
+                                    <!-- 分页工具 -->
+                                    <el-row type="flex" justify="start">
+                                        <el-col :span="14">
+                                            <el-pagination
+                                                    @size-change="handleSizeChange"
+                                                    @current-change="handleCurrentChange"
+                                                    :current-page="pagination.currentPage"
+                                                    :page-sizes="[10, 25, 50, 100]"
+                                                    :page-size="pagination.pageSize"
+                                                    background
+                                                    layout="total, sizes, prev, pager, next, jumper"
+                                                    :total="pagination.total">
+                                            </el-pagination>
+                                        </el-col>
+                                    </el-row>
+                                </template>
+
+                                <span slot="footer" class="dialog-footer">
+                            <el-button type="primary" @click="selectPerson">确 定</el-button>
+                        </span>
+                            </el-dialog>
+                        </el-form-item>
+                        <el-form-item label="会议状态" prop="status">
+                            <el-select v-model="ruleForm.status" placeholder="请选择会议状态">
+                                <el-option label="未开始" value="未开始"></el-option>
+                                <el-option label="已完成" value="已完成"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="success" plain @click="updateForm">修改</el-button>
+                            <el-button plain @click="editDialogVisible = false">取消</el-button>
+                        </el-form-item>
+                    </el-form>
+                </template>
+            </el-dialog>
+        </el-col>
+        <!--开始会议-->
+        <el-col v-if="index == 6">
+            <template>
+                <el-row type="flex" justify="center" align="middle">
+                    <el-col :span="2">
+                        <el-button type="primary" plain>开始会议</el-button>
+                    </el-col>
+                </el-row>
+            </template>
+        </el-col>
+    </el-row>
+</div>
+<!-- 引入 JQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"
+        integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
+<!-- 引入 Axios -->
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<!-- 引入 Vue -->
+<script src="https://unpkg.com/vue@2.6.14/dist/vue.js"></script>
+<!-- 引入 Element 组件库 -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="/js/home.js"></script>
+
+</body>
+</html>

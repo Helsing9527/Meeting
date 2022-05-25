@@ -9,11 +9,7 @@ import com.scetop.meeting.server.IUserServer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
 
 @RestController
 @RequestMapping("/meeting")
@@ -29,13 +25,6 @@ public class MeetingController {
     public R queryAll(@PathVariable Integer currentPage, @PathVariable Integer pageSize) {
         IPage<User> page = userServer.getPage(currentPage, pageSize);
         return new R(true, page, null);
-    }
-
-    // 登录成功 个人信息回填
-    @GetMapping("/userInfo/{id}")
-    public R queryById(@PathVariable String id) {
-        User user = userServer.getById(id);
-        return new R(true, user, null);
     }
 
     // 会议申请 表单
@@ -71,7 +60,7 @@ public class MeetingController {
     @GetMapping("/{id}")
     public R selectById(@PathVariable String id) {
         Apply apply = meetingServer.getById(id);
-        return new R(true,apply, null);
+        return new R(true, apply, null);
     }
 
     // 会议列表 编辑 更新

@@ -84,7 +84,7 @@ public class IndexController {
                 session.setAttribute("user", user);
                 return new R(true, user, "登录成功，即将跳转 ^_^");
             }
-            return new R(false, null, "登录失败，请重新登录 -_-||");
+            return new R(false, null, "未注册，请注册后再登录 -_-||");
         }
         return new R(false, null, "登录失败，图片异常，请重新登录 -_-||");
     }

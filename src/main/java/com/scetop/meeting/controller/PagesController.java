@@ -19,8 +19,20 @@ public class PagesController {
     public ModelAndView home(@PathVariable(name = "id") String id) {
         User user = userServer.getById(id);
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject("userName", user.getName());
-        modelAndView.setViewName("home");
+        // 健壮性判断，防止空指针
+        if (user != null) {
+            // 回填用户参数只登录成功页
+            modelAndView.addObject("userName", user.getName());
+            // 判断是否为管理员
+            if ("admin".equals(user.getAdminCode())) {
+                modelAndView.setViewName("admin");
+            } else {
+                modelAndView.setViewName("home");
+            }
+        } else {
+            // 健壮性判断，无该用户返回注册登录页
+            modelAndView.setViewName("redirect:/");
+        }
         return modelAndView;
     }
 
