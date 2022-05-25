@@ -7,7 +7,7 @@ spring:
   datasource:
     druid:
       driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql:///meeting?setTimezone=Aisa/shanghai
+      url: jdbc:mysql:///meeting?setTimezone=GMT%2B8
       username: root
       password: root
   thymeleaf:
@@ -24,7 +24,12 @@ mybatis-plus:
   global-config:
     db-config:
       id-type: auto
+  configuration:
+    map-underscore-to-camel-case: false
 
 #腾讯 SecretId/SecretKey
 SecretId: AKIDYuznLcbJkunPkpc8NL2TcXEfpiLhncBT
 SecretKey: 4sTosfBIBn7BxQddMozsWtymJZYGhrkM
+
+#注册管理员密匙
+adminCode: 12345

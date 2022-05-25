@@ -7,6 +7,9 @@ $(function () {
                 registerDialogVisible: false,
                 // 相机弹窗
                 cameraDialogVisible: false,
+                // 管理员注册弹窗
+                codeDialogVisible: false,
+                // 登录位图
                 loginBase64: '',
                 // 注册表单
                 ruleForm: {
@@ -16,6 +19,7 @@ $(function () {
                     gender: '',
                     base64: '',
                     faceId: '',
+                    adminCode: ''
                 },
                 // 注册表单校验
                 rules: {
@@ -74,12 +78,9 @@ $(function () {
                 this.$refs['video'].srcObject = null;
             },
             // 注册表单
-            submitForm(formName) {
+            registerForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        console.log(this.ruleForm)
-                        console.log(formName)
-                        console.log(valid)
                         axios.post("/index", this.ruleForm).then((res) => {
                             if (res.data.flag) {
                                 this.registerDialogVisible = false;

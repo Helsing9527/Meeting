@@ -24,6 +24,7 @@ public class PagesController {
         return modelAndView;
     }
 
+    // 登录页
     @RequestMapping
     public String index() {
         return "index";

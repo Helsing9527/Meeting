@@ -42,9 +42,9 @@
             center>
         <video ref="video" width="100%" height="480" autoplay></video>
         <span slot="footer" class="dialog-footer">
-    <el-button plain @click="cameraDialogVisible = false">取消</el-button>
-    <el-button plain type="primary" @click="photo">Go!</el-button>
-  </span>
+            <el-button plain @click="cameraDialogVisible = false">取消</el-button>
+            <el-button plain type="primary" @click="photo">Go!</el-button>
+        </span>
     </el-dialog>
 
     <!-- 注册弹窗 -->
@@ -86,26 +86,37 @@
                         class="upload-demo"
                         ref="upload"
                         action="#"
-                        :http-request="httpRequest"
-                >
+                        :http-request="httpRequest">
                     <el-button type="primary" plain>选择照片</el-button>
-
                 </el-upload>
+            </el-form-item>
+            <el-form-item label="注册为管理员" prop="adminCode">
+                <el-button type="success" @click="codeDialogVisible = true">输入管理员密码</el-button>
             </el-form-item>
 
             <el-form-item>
-                <el-button type="primary" plain @click="submitForm('ruleForm')">注 册</el-button>
+                <el-button type="primary" plain @click="registerForm('ruleForm')">注 册</el-button>
                 <el-button plain @click="resetForm('ruleForm')">重 置</el-button>
             </el-form-item>
         </el-form>
 
     </el-dialog>
 
+    <el-dialog
+            title="请输入管理员注册码"
+            :visible.sync="codeDialogVisible"
+            width="30%"
+            center>
+        <el-input placeholder="请输入密码" v-model="ruleForm.adminCode" show-password></el-input>
+        <span slot="footer" class="dialog-footer">
+    <el-button @click="codeDialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="codeDialogVisible = false">确 定</el-button>
+  </span>
+    </el-dialog>
 </div>
 
 <!-- 引入 JQuery -->
-<script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"
-        integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.slim.min.js" integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
 <!-- 引入 Axios -->
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <!-- 引入 Vue -->

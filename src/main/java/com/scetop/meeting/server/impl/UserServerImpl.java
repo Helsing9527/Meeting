@@ -25,4 +25,9 @@ public class UserServerImpl extends ServiceImpl<UserMapper, User> implements IUs
         userMapper.selectPage(page,null);
         return page;
     }
+
+    @Override
+    public Boolean saveAdminCode(String adminCode, Integer id) {
+        return userMapper.saveAdminCode(adminCode, id);
+    }
 }

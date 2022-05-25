@@ -8,14 +8,18 @@ import com.scetop.meeting.pojo.Base64;
 import com.scetop.meeting.pojo.User;
 import com.scetop.meeting.server.IUserServer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @RestController
 @RequestMapping(value = "/index")
-public class LoginController {
+public class IndexController {
+    @Autowired
+    private Environment env;
 
     @Autowired
     private IUserServer userServer;
@@ -36,22 +40,30 @@ public class LoginController {
         // 先将用户信息存入数据库，MP回填id，再调用腾讯新增人员
         boolean save = userServer.save(user);
         if (save) {
-            System.out.println("存入数据库成功");
+            // 上传腾讯云人员库
             String faceId = createPerson.register(user);
             if (faceId != null) {
-                System.out.println("存入腾讯人员库成功");
+                // 存储返回的人脸信息
                 Boolean saveFaceId = userServer.saveFaceId(faceId, user.getId());
-                if (saveFaceId) {
+                // 判断是否为管理员注册
+                if (env.getProperty("adminCode").equals(user.getAdminCode()) && saveFaceId) {
+                    Boolean saveAdminCode = userServer.saveAdminCode("admin", user.getId());
+                    if (saveAdminCode) {
+                        return new R(true, null, "管理员注册成功^_^");
+                    }
+                } else if (saveFaceId) {
                     return new R(true, null, "注册成功^_^");
                 }
             }
+            return new R(false, null, "照片异常 注册失败-_-!");
         }
         return new R(false, null, "注册失败-_-!");
     }
 
     // 人脸识别登录
     @PostMapping("/login")
-    public R loginUser(@RequestBody Base64 loginBase64,HttpSession session) {
+    public R loginUser(@RequestBody Base64 loginBase64, HttpServletRequest request) {
+        HttpSession session = request.getSession();
         // 校验图片大小大于10k，小于10k返回登录失败
         if (loginBase64.getLoginBase64().length() / 1024 >= 10) {
             int userId = 0;
@@ -69,6 +81,7 @@ public class LoginController {
             // 人员库内匹配登录人员，登录成功
             if (userId != 0) {
                 User user = userServer.getById(userId);
+                session.setAttribute("user", user);
                 return new R(true, user, "登录成功，即将跳转 ^_^");
             }
             return new R(false, null, "登录失败，请重新登录 -_-||");

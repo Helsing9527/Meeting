@@ -27,9 +27,10 @@ $(function () {
                 ruleForm: {
                     meetingName: '',//会议名称
                     meetingPlace: '',//会议地点
-                    date: '',//会议日期
-                    desc: '',//会议内容
-                    persons: []
+                    meetingTime: '',//会议日期
+                    meetingDesc: '',//会议内容
+                    persons: '',//选中的参会的人员
+                    status: ''//默认状态为未开始
                 },
                 rules: {
                     meetingName: [
@@ -39,10 +40,10 @@ $(function () {
                     meetingPlace: [
                         {required: true, message: '请选择会议室', trigger: 'change'}
                     ],
-                    date: [
+                    meetingTime: [
                         {type: 'date', required: true, message: '请选择日期', trigger: 'change'}
                     ],
-                    desc: [
+                    meetingDesc: [
                         {required: true, message: '请填写会议内容', trigger: 'blur'}
                     ],
                     persons: [
@@ -50,7 +51,11 @@ $(function () {
                     ]
                 },
                 //选择会议人员对话框
-                personsDialogVisible: false
+                personsDialogVisible: false,
+                // 会议列表
+                meetingList: [],
+                // 会议列表 编辑
+                editDialogVisible: false,
             };
         },
         methods: {
@@ -94,10 +99,12 @@ $(function () {
             },
             // 人员列表选中确认后遍历获取所有id，并赋值给表单等待提交
             selectPerson() {
+                var str = [];
                 var val = this.multipleSelection;
                 for (let i = 0; i < val.length; i++) {
-                    this.ruleForm.persons.push(val[i].id);
+                    str.push(val[i].id);
                 }
+                this.ruleForm.persons = str.toString();
                 this.personsDialogVisible = false;
             },
             // 分页
@@ -111,25 +118,85 @@ $(function () {
                 this.getAll();
             }
             ,
+            // 会议申请
+            meetingApply() {
+                this.setIndex(2);
+                this.ruleForm = {}
+            },
             // 会议申请表单
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        axios.post("/meeting").then((res) => {
+                        axios.post("/meeting", this.ruleForm).then((res) => {
                             if (res.data.flag) {
+                                this.resetForm('ruleForm');
                                 this.$message.success(res.data.msg);
+                            } else {
+                                this.$message.error(res.data.msg);
                             }
                         })
-                        console.log(this.ruleForm)
                     } else {
-                        console.log('error submit!!');
+                        this.$message.error('请校验表单后再提交 =_*');
                         return false;
                     }
                 });
-            }
-            ,
+            },
             resetForm(formName) {
                 this.$refs[formName].resetFields();
+            },
+            // 会议列表
+            meetingManagerList() {
+                this.index = 3;
+                this.meetingTable();
+            },
+            // 会议列表 查询数据
+            meetingTable() {
+                axios.get("/meeting").then((res) => {
+                    this.meetingList = res.data.data;
+                })
+            },
+            // 会议列表 编辑
+            handleEdit(row) {
+                axios.get("/meeting/"+row.id).then((res)=>{
+                    if (res.data.flag && res.data.data != null) {
+                        this.editDialogVisible = true;
+                        this.ruleForm = res.data.data;
+                    } else {
+                        this.$message.error("数据同步失败，自动刷新");
+                    }
+                }).finally(()=>{
+                    this.meetingTable();
+                })
+            },
+            // 会议列表 删除
+            handleDelete(row) {
+                this.$confirm("确定要删除吗？", "提示", {type: "info",}).then(() => {
+                    axios.delete("/meeting/" + row.id).then((res) => {
+                        if (res.data.flag) {
+                            this.$message.success(res.data.msg);
+                        } else {
+                            this.$message.error(res.data.msg);
+                        }
+                    }).finally(() => {
+                        this.meetingTable();
+                    })
+                }).catch(() => {
+                    this.$message.info("取消操作")
+                })
+            },
+            // 会议列表 修改
+            updateForm() {
+                axios.put("/meeting", this.ruleForm).then((res)=>{
+                    if (res.data.flag) {
+                        this.editDialogVisible = false;
+                        this.$message.success("修改成功");
+                        this.resetForm('ruleForm');
+                    } else {
+                        this.$message.error("修改失败");
+                    }
+                }).finally(()=>{
+                    this.meetingTable();
+                })
             }
         }
     });

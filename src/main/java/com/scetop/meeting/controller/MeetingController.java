@@ -2,12 +2,18 @@ package com.scetop.meeting.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.scetop.meeting.controller.util.R;
+import com.scetop.meeting.pojo.Apply;
 import com.scetop.meeting.pojo.User;
+import com.scetop.meeting.server.IMeetingServer;
 import com.scetop.meeting.server.IUserServer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 @RestController
 @RequestMapping("/meeting")
@@ -15,25 +21,67 @@ public class MeetingController {
     @Autowired
     private IUserServer userServer;
 
-    // 会议申请列表
+    @Autowired
+    private IMeetingServer meetingServer;
+
+    // 会议申请 人员列表 分页
     @GetMapping("/{currentPage}/{pageSize}")
     public R queryAll(@PathVariable Integer currentPage, @PathVariable Integer pageSize) {
         IPage<User> page = userServer.getPage(currentPage, pageSize);
         return new R(true, page, null);
     }
 
-    // 登录个人信息回填
+    // 登录成功 个人信息回填
     @GetMapping("/userInfo/{id}")
     public R queryById(@PathVariable String id) {
-        System.out.println(id);
         User user = userServer.getById(id);
-        System.out.println(user);
         return new R(true, user, null);
     }
 
+    // 会议申请 表单
     @PostMapping
-    public R createMeeting() {
-        System.out.println();
-        return new R(true,null, "会议创建成功");
+    public R createMeeting(@RequestBody Apply apply) {
+        boolean flag = meetingServer.save(apply);
+        if (flag) {
+            return new R(true, null, "会议创建成功");
+        } else {
+            return new R(false, null, "会议创建失败");
+        }
+    }
+
+    // 会议列表 表格
+    @GetMapping
+    public R meetingTable() {
+        List<Apply> list = meetingServer.list();
+        return new R(true, list, null);
+    }
+
+    // 会议列表 删除
+    @DeleteMapping("/{id}")
+    public R meetingDelete(@PathVariable String id) {
+        boolean flag = meetingServer.removeById(id);
+        if (flag) {
+            return new R(true, null, "删除成功");
+        } else {
+            return new R(false, null, "数据同步失败，自动刷新");
+        }
+    }
+
+    // 会议列表 编辑 根据id查询用户信息 回填表单
+    @GetMapping("/{id}")
+    public R selectById(@PathVariable String id) {
+        Apply apply = meetingServer.getById(id);
+        return new R(true,apply, null);
+    }
+
+    // 会议列表 编辑 更新
+    @PutMapping
+    public R update(@RequestBody Apply apply) {
+        boolean flag = meetingServer.updateById(apply);
+        if (flag) {
+            return new R(true, null, "修改成功");
+        } else {
+            return new R(false, null, "数据同步失败，自动刷新");
+        }
     }
 }

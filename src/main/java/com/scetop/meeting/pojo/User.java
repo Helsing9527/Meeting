@@ -18,4 +18,6 @@ public class User {
     private String base64;
     @TableField(exist = false)
     private String faceId;
+    @TableField(exist = false)
+    private String adminCode;
 }

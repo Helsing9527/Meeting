@@ -9,4 +9,7 @@ import org.apache.ibatis.annotations.Update;
 public interface UserMapper extends BaseMapper<User> {
     @Update("update user set faceId = #{faceId} where id = #{id}")
     Boolean saveFaceId(String faceId, Integer id);
+
+    @Update("update user set adminCode = #{adminCode} where id = #{id}")
+    Boolean saveAdminCode(String adminCode, Integer id);
 }
