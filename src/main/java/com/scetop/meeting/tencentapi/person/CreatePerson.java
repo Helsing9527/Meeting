@@ -1,4 +1,4 @@
-package com.scetop.meeting.tencentapi;
+package com.scetop.meeting.tencentapi.person;
 
 import com.scetop.meeting.pojo.User;
 import com.tencentcloudapi.common.Credential;

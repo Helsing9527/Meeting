@@ -3,9 +3,13 @@ package com.scetop.meeting.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.scetop.meeting.controller.util.R;
 import com.scetop.meeting.pojo.Apply;
+import com.scetop.meeting.pojo.Group;
 import com.scetop.meeting.pojo.User;
 import com.scetop.meeting.server.IMeetingServer;
 import com.scetop.meeting.server.IUserServer;
+import com.scetop.meeting.tencentapi.group.CreateGroup;
+import com.scetop.meeting.tencentapi.group.DeleteGroup;
+import com.scetop.meeting.tencentapi.group.GetGroupList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +23,15 @@ public class MeetingController {
 
     @Autowired
     private IMeetingServer meetingServer;
+
+    @Autowired
+    private CreateGroup createGroup;
+
+    @Autowired
+    private GetGroupList getGroupList;
+
+    @Autowired
+    private DeleteGroup deleteGroup;
 
     // 会议申请 人员列表 分页
     @GetMapping("/{currentPage}/{pageSize}")
@@ -67,6 +80,52 @@ public class MeetingController {
     @PutMapping
     public R update(@RequestBody Apply apply) {
         boolean flag = meetingServer.updateById(apply);
+        if (flag) {
+            return new R(true, null, "修改成功");
+        } else {
+            return new R(false, null, "数据同步失败，自动刷新");
+        }
+    }
+
+    // 人员库创建
+    @PostMapping("/group")
+    public R createGroup(@RequestBody Group group) {
+        Boolean flag = createGroup.createGroup(group);
+        if (flag) {
+            return new R(true, null, "创建成功");
+        } else {
+            return new R(false, null, "数据同步失败，自动刷新");
+        }
+    }
+
+    // 人员库管理
+    @GetMapping("/group")
+    public R group() {
+        String groupList = getGroupList.getGroupList();
+        return new R(true, groupList, null);
+    }
+
+    // 人员库删除
+    @DeleteMapping("/group/{id}")
+    public R deleteGroup(@PathVariable String id) {
+        deleteGroup.deleteGroup(id);
+        return new R(true, null, "删除成功");
+    }
+
+    // 查询人员信息回填修改弹窗
+    @GetMapping("/person/{id}")
+    public R queryPersonById(@PathVariable String id) {
+        User user = userServer.getById(id);
+        if (user != null) {
+            return new R(true, user, null);
+        }
+        return new R(false, null, "数据同步失败，自动刷新");
+    }
+
+    // 修改人员信息
+    @PutMapping("/person")
+    public R updatePerson(@RequestBody User user) {
+        boolean flag = userServer.updateById(user);
         if (flag) {
             return new R(true, null, "修改成功");
         } else {

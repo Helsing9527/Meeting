@@ -36,11 +36,11 @@
                     <i class="el-icon-menu"></i>
                     <span slot="title">欢迎页</span>
                 </el-menu-item>
-                <el-menu-item index="4" @click="setIndex(6)">
+                <el-menu-item index="4" @click="setIndex(8)">
                     <i class="el-icon-data-line"></i>
                     <span slot="title">开始会议</span>
                 </el-menu-item>
-                <el-menu-item index="5" @click="setIndex(7)">
+                <el-menu-item index="5" @click="setIndex(9)">
                     <i class="el-icon-setting"></i>
                     <span slot="title">设置</span>
                 </el-menu-item>
@@ -49,7 +49,7 @@
         <!--欢迎页-->
         <el-calendar v-model="value" v-if="index == 1"></el-calendar>
         <!--开始会议-->
-        <el-col v-if="index == 6">
+        <el-col v-if="index == 8">
             <template>
                 <el-row type="flex" justify="center" align="middle">
                     <el-col :span="2">

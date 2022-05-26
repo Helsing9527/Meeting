@@ -1,8 +1,8 @@
 package com.scetop.meeting.controller;
 
-import com.scetop.meeting.tencentapi.CreatePerson;
-import com.scetop.meeting.tencentapi.GetPersonList;
-import com.scetop.meeting.tencentapi.VerifyFace;
+import com.scetop.meeting.tencentapi.person.CreatePerson;
+import com.scetop.meeting.tencentapi.person.GetPersonList;
+import com.scetop.meeting.tencentapi.face.VerifyFace;
 import com.scetop.meeting.controller.util.R;
 import com.scetop.meeting.pojo.Base64;
 import com.scetop.meeting.pojo.User;
@@ -46,7 +46,7 @@ public class IndexController {
                 // 存储返回的人脸信息
                 Boolean saveFaceId = userServer.saveFaceId(faceId, user.getId());
                 // 判断是否为管理员注册
-                if (env.getProperty("adminCode").equals(user.getAdminCode()) && saveFaceId) {
+                if ((env.getProperty("adminCode").equals(user.getAdminCode()) || "admin".equals(user.getAdminCode())) && saveFaceId) {
                     Boolean saveAdminCode = userServer.saveAdminCode("admin", user.getId());
                     if (saveAdminCode) {
                         return new R(true, null, "管理员注册成功^_^");

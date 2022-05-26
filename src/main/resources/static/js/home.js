@@ -56,7 +56,53 @@ $(function () {
                 meetingList: [],
                 // 会议列表 编辑
                 editDialogVisible: false,
-                admin: ''
+                // 人员库 创建
+                createGroupRuleForm: {
+                    groupName: '',
+                    groupId: '',
+                    remark: ''
+                },
+                createGroupRules: {
+                    groupName: [
+                        {required: true, message: '请输入人员库名称', trigger: 'blur'},
+                        {min: 1, max: 60, message: '长度在 1 到 60 个字符', trigger: 'blur'}
+                    ],
+                    groupId: [
+                        {required: true, message: '请输入人员库 ID', trigger: 'blur'}
+                    ]
+                },
+                // 创建人员 表单/校验
+                personForm: {
+                    name: '',
+                    dept: '',
+                    post: '',
+                    gender: '',
+                    base64: '',
+                    faceId: '',
+                    adminCode: ''
+                },
+                personFormRules: {
+                    name: [
+                        {required: true, message: '请输入姓名', trigger: 'blur'},
+                        {min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur'}
+                    ],
+                    dept: [
+                        {required: true, message: '请选择部门', trigger: 'change'}
+                    ],
+                    post: [
+                        {required: true, message: '请选择职位', trigger: 'change'}
+                    ],
+                    gender: [
+                        {required: true, message: '请选择性别', trigger: 'change'}
+                    ],
+                    base64: [
+                        {required: true, message: '请拍照或上传照片', trigger: 'input'}
+                    ]
+                },
+                // 人员库
+                groupTableData: [],
+                // 人员编辑弹窗
+                personDialogVisible: false
             };
         },
         methods: {
@@ -112,13 +158,11 @@ $(function () {
             handleSizeChange(val) {
                 this.pagination.pageSize = val;
                 this.getAll();
-            }
-            ,
+            },
             handleCurrentChange(val) {
                 this.pagination.currentPage = val;
                 this.getAll();
-            }
-            ,
+            },
             // 会议申请
             meetingApply() {
                 this.setIndex(2);
@@ -132,6 +176,7 @@ $(function () {
                             if (res.data.flag) {
                                 this.resetForm('ruleForm');
                                 this.$message.success(res.data.msg);
+                                this.meetingManagerList();
                             } else {
                                 this.$message.error(res.data.msg);
                             }
@@ -142,6 +187,7 @@ $(function () {
                     }
                 });
             },
+            // 重置表单
             resetForm(formName) {
                 this.$refs[formName].resetFields();
             },
@@ -158,14 +204,14 @@ $(function () {
             },
             // 会议列表 编辑
             handleEdit(row) {
-                axios.get("/meeting/"+row.id).then((res)=>{
+                axios.get("/meeting/" + row.id).then((res) => {
                     if (res.data.flag && res.data.data != null) {
                         this.editDialogVisible = true;
                         this.ruleForm = res.data.data;
                     } else {
-                        this.$message.error("数据同步失败，自动刷新");
+                        this.$message.error(res.data.msg);
                     }
-                }).finally(()=>{
+                }).finally(() => {
                     this.meetingTable();
                 })
             },
@@ -187,16 +233,155 @@ $(function () {
             },
             // 会议列表 修改
             updateForm() {
-                axios.put("/meeting", this.ruleForm).then((res)=>{
+                axios.put("/meeting", this.ruleForm).then((res) => {
                     if (res.data.flag) {
                         this.editDialogVisible = false;
-                        this.$message.success("修改成功");
+                        this.$message.success(res.data.msg);
                         this.resetForm('ruleForm');
                     } else {
-                        this.$message.error("修改失败");
+                        this.$message.error(res.data.msg);
                     }
-                }).finally(()=>{
+                }).finally(() => {
                     this.meetingTable();
+                })
+            },
+            // 人员库创建
+            createGroup() {
+                this.setIndex(4);
+            },
+            // 人员库创建表单
+            submitCreateGroupForm(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        axios.post("/meeting/group", this.createGroupRuleForm).then((res) => {
+                            if (res.data.flag) {
+                                this.resetForm('createGroupRuleForm')
+                                this.$message.success(res.data.msg);
+                                this.group();
+                            } else {
+                                this.$message.error(res.data.msg);
+                            }
+                        })
+                    } else {
+                        this.$message.error('请校验表单后再提交 =_*');
+                        return false;
+                    }
+                });
+
+            },
+            // 人员库列表
+            group() {
+                this.setIndex(5);
+                axios.get("/meeting/group").then((res) => {
+                    // 传回的data数据为String,先转换为json对象
+                    var parseData = JSON.parse(res.data.data);
+                    this.groupTableData = parseData.GroupInfos;
+                })
+            },
+            // 人员库删除
+            groupHandleDelete(row) {
+                this.$confirm("删除该人员库及包含的所有的人员，确定要删除吗？", "警告", {type: "warn",}).then(() => {
+                    axios.delete("/meeting/group/" + row.GroupId).then((res) => {
+                        if (res.data.flag) {
+                            this.$message.success(res.data.msg);
+                        } else {
+                            this.$message.error(res.data.msg);
+                        }
+                    }).finally(() => {
+                        this.group();
+                    })
+                }).catch(() => {
+                    this.$message.info("取消操作")
+                })
+            },
+            // 创建人员
+            createPerson() {
+                this.setIndex(6);
+            },
+            // 覆盖默认的上传行为，可以自定义上传的实现
+            httpRequest(data) {
+                // 转base64
+                this.getBase64(data.file).then(resBase64 => {
+                    //直接拿到base64信息
+                    this.fileBase64 = resBase64;
+                    this.personForm.base64 = this.fileBase64;
+                })
+                var that = this
+                setTimeout(function () {
+                    that.uploadPercent = 100
+                }, 2000)
+            },
+            // 转base64编码
+            getBase64(file) {
+                this.dialogVisible = false
+                return new Promise((resolve, reject) => {
+                    let reader = new FileReader();
+                    let fileResult = "";
+                    reader.readAsDataURL(file);
+                    //开始转
+                    reader.onload = function () {
+                        fileResult = reader.result;
+                    };
+                    //转失败
+                    reader.onerror = function (error) {
+                        reject(error);
+                    };
+                    //转结束咱就 resolve 出去
+                    reader.onloadend = function () {
+                        resolve(fileResult);
+                    };
+                });
+            },
+            // 创建人员 注册
+            registerForm(formName) {
+                console.log(this.personForm)
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        axios.post("/index", this.personForm).then((res) => {
+                            if (res.data.flag) {
+                                this.resetForm('personForm');
+                                this.$message.success(res.data.msg);
+                                this.persons();
+                            } else {
+                                this.$message.error(res.data.msg);
+                            }
+                        })
+                    } else {
+                        this.$message.error('请完善表单内容 :(');
+                        return false;
+                    }
+                });
+            },
+            // 人员列表
+            persons() {
+                this.setIndex(7);
+                this.getAll();
+            },
+            // 人员修改
+            personHandleEdit(row) {
+                axios.get("/meeting/person/" + row.id).then((res) => {
+                    if (res.data.flag && res.data.data != null) {
+                        this.personDialogVisible = true;
+                        this.personForm = res.data.data;
+                    } else {
+                        this.$message.error(res.data.msg);
+                    }
+                }).finally(() => {
+                    this.persons();
+                })
+            },
+            // 人员删除
+            personHandleDelete() {
+                axios.put("/meeting/person", this.personForm).then((res) => {
+                    if (res.data.flag) {
+                        this.personDialogVisible = false;
+                        this.$message.success(res.data.msg);
+                        this.resetForm('personForm');
+                    } else {
+                        this.$message.error(res.data.msg);
+                    }
+                }).finally(() => {
+                    this.persons();
                 })
             }
         }

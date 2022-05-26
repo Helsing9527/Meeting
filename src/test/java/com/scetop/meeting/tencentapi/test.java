@@ -1,6 +1,8 @@
 package com.scetop.meeting.tencentapi;
 
 import com.scetop.meeting.server.IUserServer;
+import com.scetop.meeting.tencentapi.face.VerifyFace;
+import com.scetop.meeting.tencentapi.person.GetPersonList;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
