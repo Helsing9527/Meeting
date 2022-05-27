@@ -77,6 +77,13 @@ public class MeetingController {
         }
     }
 
+    // 会议列表 根据id查询所有参会人员姓名
+    @GetMapping("/ids/{ids}")
+    public R queryIds(@PathVariable List ids) {
+        List list = userServer.listByIds(ids);
+        return new R(true, list, null);
+    }
+
     // 会议列表 编辑 根据id查询用户信息 回填表单
     @GetMapping("/{id}")
     public R selectById(@PathVariable String id) {

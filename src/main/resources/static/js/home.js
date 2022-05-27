@@ -129,6 +129,14 @@ $(function () {
             // 分页查询数据库人员并回填列表
             getAll() {
                 axios.get("/meeting/" + this.pagination.currentPage + "/" + this.pagination.pageSize).then((res) => {
+                    var records = res.data.data.records;
+                    for (let record of records) {
+                        if (record.gender == 1) {
+                            record.gender = '男'
+                        } else {
+                            record.gender = '女'
+                        }
+                    }
                     this.tableData = res.data.data.records;
                     this.pagination.currentPage = res.data.data.current;
                     this.pagination.pageSize = res.data.data.size;
@@ -203,6 +211,23 @@ $(function () {
             // 会议列表 查询数据
             meetingTable() {
                 axios.get("/meeting").then((res) => {
+                    let data = res.data.data;
+                    // 遍历出每一次会议
+                    for (let datum of data) {
+                        // 格式化时间为中国标准时间
+                        let date = new Date(datum.meetingTime);
+                        datum.meetingTime = date.toString();
+                        let personName = [];
+                        // 发送此次会议所有 id 返回 所有id 人员信息
+                        axios.get("/meeting/ids/" + datum.persons).then((res) => {
+                            let users = res.data.data;
+                            for (let user of users) {
+                                // 此次会议中每个人的姓名
+                                personName.push(user.name + " ")
+                            }
+                        })
+                        datum.persons = personName;
+                    }
                     this.meetingList = res.data.data;
                 })
             },
