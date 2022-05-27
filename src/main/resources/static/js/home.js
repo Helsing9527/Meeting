@@ -102,7 +102,11 @@ $(function () {
                 // 人员库
                 groupTableData: [],
                 // 人员编辑弹窗
-                personDialogVisible: false
+                personDialogVisible: false,
+                // 相机弹窗
+                cameraDialogVisible: false,
+                // 签到位图
+                loginBase64: ''
             };
         },
         methods: {
@@ -280,7 +284,7 @@ $(function () {
             },
             // 人员库删除
             groupHandleDelete(row) {
-                this.$confirm("删除该人员库及包含的所有的人员，确定要删除吗？", "警告", {type: "warn",}).then(() => {
+                this.$confirm("删除该人员库及包含的所有的人员，确定要删除吗？", "警告", {type: "info",}).then(() => {
                     axios.delete("/meeting/group/" + row.GroupId).then((res) => {
                         if (res.data.flag) {
                             this.$message.success(res.data.msg);
@@ -297,6 +301,7 @@ $(function () {
             // 创建人员
             createPerson() {
                 this.setIndex(6);
+                this.ruleForm = {}
             },
             // 覆盖默认的上传行为，可以自定义上传的实现
             httpRequest(data) {
@@ -313,7 +318,6 @@ $(function () {
             },
             // 转base64编码
             getBase64(file) {
-                this.dialogVisible = false
                 return new Promise((resolve, reject) => {
                     let reader = new FileReader();
                     let fileResult = "";
@@ -357,7 +361,7 @@ $(function () {
                 this.setIndex(7);
                 this.getAll();
             },
-            // 人员修改
+            // 人员修改 弹窗
             personHandleEdit(row) {
                 axios.get("/meeting/person/" + row.id).then((res) => {
                     if (res.data.flag && res.data.data != null) {
@@ -370,19 +374,87 @@ $(function () {
                     this.persons();
                 })
             },
-            // 人员删除
-            personHandleDelete() {
+            // 人员修改
+            personHandleUpdate() {
                 axios.put("/meeting/person", this.personForm).then((res) => {
                     if (res.data.flag) {
                         this.personDialogVisible = false;
                         this.$message.success(res.data.msg);
-                        this.resetForm('personForm');
+                        this.personForm = {}
                     } else {
                         this.$message.error(res.data.msg);
                     }
                 }).finally(() => {
                     this.persons();
                 })
+            },
+            // 人员删除
+            personHandleDelete(row) {
+                this.$confirm("确定要删除吗？", "警告", {type: "info",}).then(() => {
+                    axios.delete("/meeting/person/" + row.id).then((res) => {
+                        if (res.data.flag) {
+                            this.$message.success(res.data.msg);
+                        } else {
+                            this.$message.error(res.data.msg);
+                        }
+                    }).finally(() => {
+                        this.persons();
+                    })
+                }).catch(() => {
+                    this.$message.info("取消操作")
+                })
+            },
+            // 开始会议
+            startMeeting() {
+                axios.get("/meeting/person/" + $("#userId").text()).then((res) => {
+                    if (res.data.data.status == 1) {
+                        this.callCamera();
+                        this.cameraDialogVisible = true;
+                        this.$message.success("签到完成");
+                    } else {
+                        this.$message.error("当前没有会议");
+                    }
+                })
+            },
+            // 拍照 Go!
+            photo() {
+                this.photograph();
+                this.cameraDialogVisible = false;
+                this.closeCamera();
+            },
+            // 拍照
+            photograph() {
+                let ctx = this.$refs['canvas'].getContext('2d');
+                // 把当前视频帧内容渲染到canvas上
+                ctx.drawImage(this.$refs['video'], 0, 0, 640, 480);
+                // 转base64格式、图片格式转换、图片质量压缩---支持两种格式image/jpeg+image/png
+                let imgBase64 = this.$refs['canvas'].toDataURL('image/jpeg', 0.7);
+                this.loginBase64 = imgBase64;
+                console.log(imgBase64)
+            },
+            // 调用摄像头
+            callCamera() {
+                // H5调用电脑摄像头API
+                navigator.mediaDevices.getUserMedia({
+                    video: true
+                }).then(success => {
+                    // 摄像头开启成功
+                    this.$refs['video'].srcObject = success;
+                    // 实时拍照效果
+                    this.$refs['video'].play();
+                }).catch(error => {
+                    this.$message.error('摄像头开启失败，请检查摄像头是否可用！');
+                })
+            },
+            // 关闭摄像头
+            closeCamera() {
+                if (!this.$refs['video'].srcObject) return;
+                let stream = this.$refs['video'].srcObject;
+                let tracks = stream.getTracks();
+                tracks.forEach(track => {
+                    track.stop();
+                })
+                this.$refs['video'].srcObject = null;
             }
         }
     });

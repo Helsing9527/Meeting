@@ -7,6 +7,7 @@ import com.scetop.meeting.controller.util.R;
 import com.scetop.meeting.pojo.Base64;
 import com.scetop.meeting.pojo.User;
 import com.scetop.meeting.server.IUserServer;
+import com.tencentcloudapi.iai.v20200303.models.CreatePersonResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.*;
@@ -34,17 +35,17 @@ public class IndexController {
     private VerifyFace verifyFace;
 
     // 注册业务
-    // 待解决bug:同一人重复注册问题/健壮性问题
     @PostMapping
     public R registerUser(@RequestBody User user) {
         // 先将用户信息存入数据库，MP回填id，再调用腾讯新增人员
         boolean save = userServer.save(user);
         if (save) {
             // 上传腾讯云人员库
-            String faceId = createPerson.register(user);
-            if (faceId != null) {
+//            String faceId = createPerson.register(user);
+            CreatePersonResponse register = createPerson.register(user);
+            if (register.getFaceId() != null && register.getSimilarPersonId() == null) {
                 // 存储返回的人脸信息
-                Boolean saveFaceId = userServer.saveFaceId(faceId, user.getId());
+                Boolean saveFaceId = userServer.saveFaceId(register.getFaceId(), user.getId());
                 // 判断是否为管理员注册
                 if ((env.getProperty("adminCode").equals(user.getAdminCode()) || "admin".equals(user.getAdminCode())) && saveFaceId) {
                     Boolean saveAdminCode = userServer.saveAdminCode("admin", user.getId());
@@ -55,6 +56,7 @@ public class IndexController {
                     return new R(true, null, "注册成功^_^");
                 }
             }
+            userServer.removeById(user.getId());
             return new R(false, null, "照片异常 注册失败-_-!");
         }
         return new R(false, null, "注册失败-_-!");
@@ -69,7 +71,7 @@ public class IndexController {
             int userId = 0;
             // 获取人员库所有人员id
             List<String> personList = getPersonList.getPersonList();
-            // 便利调用验证人员
+            // 遍历调用验证人员
             for (String personId : personList) {
                 Boolean flag = verifyFace.verifyFace(loginBase64.getLoginBase64(), personId);
                 // 匹配人员返回人员id

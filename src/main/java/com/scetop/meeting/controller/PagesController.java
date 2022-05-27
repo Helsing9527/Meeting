@@ -22,7 +22,7 @@ public class PagesController {
         // 健壮性判断，防止空指针
         if (user != null) {
             // 回填用户参数只登录成功页
-            modelAndView.addObject("userName", user.getName());
+            modelAndView.addObject("userInfo", user);
             // 判断是否为管理员
             if ("admin".equals(user.getAdminCode())) {
                 modelAndView.setViewName("admin");

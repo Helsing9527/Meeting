@@ -29,7 +29,7 @@
                         </el-col>
                     </el-row>
                     <el-row type="flex" justify="center">
-                        <el-col :span="6"><p th:text="${userName}"></p></el-col>
+                        <el-col :span="6"><p th:text="${userInfo.name}"></p><p th:text="${userInfo.id}" style="display: none" id="userId"></p></el-col>
                     </el-row>
                 </div>
                 <el-menu-item index="1" @click="setIndex(1)">
@@ -53,10 +53,23 @@
             <template>
                 <el-row type="flex" justify="center" align="middle">
                     <el-col :span="2">
-                        <el-button type="primary" plain>开始会议</el-button>
+                        <el-button type="primary" plain @click="startMeeting">开始会议</el-button>
                     </el-col>
                 </el-row>
             </template>
+            <!-- 拍照弹窗 -->
+            <el-dialog
+                    title="Meeting"
+                    :visible.sync="cameraDialogVisible"
+                    @close="closeCamera"
+                    center>
+                <canvas ref="canvas" width="640" height="480" style="display: none"></canvas>
+                <video ref="video" width="100%" height="480" autoplay></video>
+                <span slot="footer" class="dialog-footer">
+            <el-button plain @click="cameraDialogVisible = false">取消</el-button>
+            <el-button plain type="primary" @click="photo">Go!</el-button>
+        </span>
+            </el-dialog>
         </el-col>
     </el-row>
 </div>

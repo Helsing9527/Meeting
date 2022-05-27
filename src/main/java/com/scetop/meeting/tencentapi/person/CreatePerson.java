@@ -16,7 +16,7 @@ public class CreatePerson {
     @Autowired
     private Environment env;
 
-    public String register(User user) {
+    public CreatePersonResponse register(User user) {
         try {
             // 实例化一个认证对象，入参需要传入腾讯云账户secretId，secretKey,此处还需注意密钥对的保密
             // 密钥可前往https://console.cloud.tencent.com/cam/capi网站进行获取
@@ -61,7 +61,8 @@ public class CreatePerson {
             CreatePersonResponse resp = client.CreatePerson(req);
             // 输出json格式的字符串回包
 //            System.out.println(CreatePersonResponse.toJsonString(resp));
-            return resp.getFaceId();
+//            return resp.getFaceId();
+            return resp;
         } catch (TencentCloudSDKException e) {
             System.out.println(e.toString());
             return null;

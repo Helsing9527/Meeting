@@ -10,6 +10,8 @@ import com.scetop.meeting.server.IUserServer;
 import com.scetop.meeting.tencentapi.group.CreateGroup;
 import com.scetop.meeting.tencentapi.group.DeleteGroup;
 import com.scetop.meeting.tencentapi.group.GetGroupList;
+import com.scetop.meeting.tencentapi.person.DeletePerson;
+import com.scetop.meeting.tencentapi.person.ModifyPersonBaseInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,6 +34,12 @@ public class MeetingController {
 
     @Autowired
     private DeleteGroup deleteGroup;
+
+    @Autowired
+    private ModifyPersonBaseInfo modifyPersonBaseInfo;
+
+    @Autowired
+    private DeletePerson deletePerson;
 
     // 会议申请 人员列表 分页
     @GetMapping("/{currentPage}/{pageSize}")
@@ -108,16 +116,22 @@ public class MeetingController {
     // 人员库删除
     @DeleteMapping("/group/{id}")
     public R deleteGroup(@PathVariable String id) {
-        deleteGroup.deleteGroup(id);
-        return new R(true, null, "删除成功");
+        // 先删除本地数据库信息
+        boolean flag = userServer.removeById(id);
+        if (flag) {
+            // 再删除腾讯云人员库内信息
+            deleteGroup.deleteGroup(id);
+            return new R(true, null, "删除成功");
+        }
+        return new R(true, null, "数据同步失败，自动刷新");
     }
 
-    // 查询人员信息回填修改弹窗
+    // 根据id查询人员信息  回填修改弹窗/会议签到权限
     @GetMapping("/person/{id}")
     public R queryPersonById(@PathVariable String id) {
         User user = userServer.getById(id);
         if (user != null) {
-            return new R(true, user, null);
+            return new R(true, user, "修改成功");
         }
         return new R(false, null, "数据同步失败，自动刷新");
     }
@@ -127,7 +141,20 @@ public class MeetingController {
     public R updatePerson(@RequestBody User user) {
         boolean flag = userServer.updateById(user);
         if (flag) {
+            modifyPersonBaseInfo.modifyPersonBaseInfo(user);
             return new R(true, null, "修改成功");
+        } else {
+            return new R(false, null, "数据同步失败，自动刷新");
+        }
+    }
+
+    // 删除人员信息
+    @DeleteMapping("/person/{id}")
+    public R removePerson(@PathVariable String id) {
+        boolean flag = userServer.removeById(id);
+        if (flag) {
+            deletePerson.deletePerson(id);
+            return new R(true, null, "删除成功");
         } else {
             return new R(false, null, "数据同步失败，自动刷新");
         }
