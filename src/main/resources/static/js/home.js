@@ -11,6 +11,10 @@ $(function () {
                 url: 'https://cn.vuejs.org/images/logo.svg',
                 // 会议申请 人员表格
                 tableData: [],
+                // 创建会议弹窗
+                creatMeetingDialogVisible: false,
+                // 会议详情弹窗
+                meetingDetailsDialogVisible: false,
                 // 会议申请 分页工具条
                 pagination: {//分页相关模型数据
                     currentPage: 1,//当前页码
@@ -27,10 +31,11 @@ $(function () {
                 ruleForm: {
                     meetingName: '',//会议名称
                     meetingPlace: '',//会议地点
-                    meetingTime: '',//会议日期
+                    startTime: '',//开始时间
+                    endTime: '',//结束时间
                     meetingDesc: '',//会议内容
                     persons: '',//选中的参会的人员
-                    status: ''//默认状态为未开始
+                    status: '未开始'//默认状态为未开始
                 },
                 rules: {
                     meetingName: [
@@ -40,8 +45,11 @@ $(function () {
                     meetingPlace: [
                         {required: true, message: '请选择会议室', trigger: 'change'}
                     ],
-                    meetingTime: [
-                        {type: 'date', required: true, message: '请选择日期', trigger: 'change'}
+                    startTime: [
+                        {required: true, message: '请选择开始时间', trigger: 'change'}
+                    ],
+                    endTime: [
+                        {required: true, message: '请选择结束时间', trigger: 'change'}
                     ],
                     meetingDesc: [
                         {required: true, message: '请填写会议内容', trigger: 'blur'}
@@ -54,24 +62,12 @@ $(function () {
                 personsDialogVisible: false,
                 // 会议列表
                 meetingList: [],
+                //参会人员列表
+                meetingDetailsList: [],
                 // 会议列表 编辑
                 editDialogVisible: false,
-                // 人员库 创建
-                createGroupRuleForm: {
-                    groupName: '',
-                    groupId: '',
-                    remark: ''
-                },
-                createGroupRules: {
-                    groupName: [
-                        {required: true, message: '请输入人员库名称', trigger: 'blur'},
-                        {min: 1, max: 60, message: '长度在 1 到 60 个字符', trigger: 'blur'}
-                    ],
-                    groupId: [
-                        {required: true, message: '请输入人员库 ID', trigger: 'blur'}
-                    ]
-                },
                 // 创建人员 表单/校验
+                registerDialogVisible: false,
                 personForm: {
                     name: '',
                     dept: '',
@@ -99,8 +95,6 @@ $(function () {
                         {required: true, message: '请拍照或上传照片', trigger: 'input'}
                     ]
                 },
-                // 人员库
-                groupTableData: [],
                 // 人员编辑弹窗
                 personDialogVisible: false,
                 // 相机弹窗
@@ -175,23 +169,20 @@ $(function () {
                 this.pagination.currentPage = val;
                 this.getAll();
             },
-            // 会议申请
-            meetingApply() {
-                this.setIndex(2);
-                this.ruleForm = {}
-            },
             // 会议申请表单
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         axios.post("/meeting", this.ruleForm).then((res) => {
                             if (res.data.flag) {
-                                this.resetForm('ruleForm');
+                                this.ruleForm = {}
                                 this.$message.success(res.data.msg);
-                                this.meetingManagerList();
+                                this.creatMeetingDialogVisible = false;
                             } else {
                                 this.$message.error(res.data.msg);
                             }
+                        }).finally(() => {
+                            this.meetingManagerList();
                         })
                     } else {
                         this.$message.error('请校验表单后再提交 =_*');
@@ -211,32 +202,21 @@ $(function () {
             // 会议列表 查询数据
             meetingTable() {
                 axios.get("/meeting").then((res) => {
-                    let data = res.data.data;
-                    // 遍历出每一次会议
-                    for (let datum of data) {
-                        // 格式化时间为中国标准时间
-                        let date = new Date(datum.meetingTime);
-                        datum.meetingTime = date.toString();
-                        let personName = [];
-                        // 发送此次会议所有 id 返回 所有id 人员信息
-                        axios.get("/meeting/ids/" + datum.persons).then((res) => {
-                            let users = res.data.data;
-                            for (let user of users) {
-                                // 此次会议中每个人的姓名
-                                personName.push(user.name + " ")
-                            }
-                        })
-                        datum.persons = personName;
-                    }
                     this.meetingList = res.data.data;
                 })
             },
             // 会议列表 编辑
             handleEdit(row) {
-                axios.get("/meeting/" + row.id).then((res) => {
-                    if (res.data.flag && res.data.data != null) {
-                        this.editDialogVisible = true;
-                        this.ruleForm = res.data.data;
+                this.editDialogVisible = true;
+                this.ruleForm = row;
+            },
+            // 会议列表 修改
+            updateForm() {
+                axios.put("/meeting", this.ruleForm).then((res) => {
+                    if (res.data.flag) {
+                        this.editDialogVisible = false;
+                        this.$message.success(res.data.msg);
+                        this.resetForm('ruleForm');
                     } else {
                         this.$message.error(res.data.msg);
                     }
@@ -260,73 +240,11 @@ $(function () {
                     this.$message.info("取消操作")
                 })
             },
-            // 会议列表 修改
-            updateForm() {
-                axios.put("/meeting", this.ruleForm).then((res) => {
-                    if (res.data.flag) {
-                        this.editDialogVisible = false;
-                        this.$message.success(res.data.msg);
-                        this.resetForm('ruleForm');
-                    } else {
-                        this.$message.error(res.data.msg);
-                    }
-                }).finally(() => {
-                    this.meetingTable();
-                })
-            },
-            // 人员库创建
-            createGroup() {
-                this.setIndex(4);
-            },
-            // 人员库创建表单
-            submitCreateGroupForm(formName) {
-                this.$refs[formName].validate((valid) => {
-                    if (valid) {
-                        axios.post("/meeting/group", this.createGroupRuleForm).then((res) => {
-                            if (res.data.flag) {
-                                this.resetForm('createGroupRuleForm')
-                                this.$message.success(res.data.msg);
-                                this.group();
-                            } else {
-                                this.$message.error(res.data.msg);
-                            }
-                        })
-                    } else {
-                        this.$message.error('请校验表单后再提交 =_*');
-                        return false;
-                    }
-                });
-
-            },
-            // 人员库列表
-            group() {
-                this.setIndex(5);
-                axios.get("/meeting/group").then((res) => {
-                    // 传回的data数据为String,先转换为json对象
-                    var parseData = JSON.parse(res.data.data);
-                    this.groupTableData = parseData.GroupInfos;
-                })
-            },
-            // 人员库删除
-            groupHandleDelete(row) {
-                this.$confirm("删除该人员库及包含的所有的人员，确定要删除吗？", "警告", {type: "info",}).then(() => {
-                    axios.delete("/meeting/group/" + row.GroupId).then((res) => {
-                        if (res.data.flag) {
-                            this.$message.success(res.data.msg);
-                        } else {
-                            this.$message.error(res.data.msg);
-                        }
-                    }).finally(() => {
-                        this.group();
-                    })
-                }).catch(() => {
-                    this.$message.info("取消操作")
-                })
-            },
-            // 创建人员
-            createPerson() {
-                this.setIndex(6);
-                this.ruleForm = {}
+            // 会议列表 详情
+            meetingDetails(row) {
+                this.meetingDetailsDialogVisible = true;
+                this.ruleForm = row;
+                console.log(row)
             },
             // 覆盖默认的上传行为，可以自定义上传的实现
             httpRequest(data) {
@@ -370,10 +288,12 @@ $(function () {
                             if (res.data.flag) {
                                 this.resetForm('personForm');
                                 this.$message.success(res.data.msg);
-                                this.persons();
+                                this.registerDialogVisible = false;
                             } else {
                                 this.$message.error(res.data.msg);
                             }
+                        }).finally(() => {
+                            this.persons();
                         })
                     } else {
                         this.$message.error('请完善表单内容 :(');
@@ -383,7 +303,7 @@ $(function () {
             },
             // 人员列表
             persons() {
-                this.setIndex(7);
+                this.setIndex(4);
                 this.getAll();
             },
             // 人员修改 弹窗

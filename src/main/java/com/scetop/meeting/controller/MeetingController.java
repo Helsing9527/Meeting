@@ -27,15 +27,6 @@ public class MeetingController {
     private IMeetingServer meetingServer;
 
     @Autowired
-    private CreateGroup createGroup;
-
-    @Autowired
-    private GetGroupList getGroupList;
-
-    @Autowired
-    private DeleteGroup deleteGroup;
-
-    @Autowired
     private ModifyPersonBaseInfo modifyPersonBaseInfo;
 
     @Autowired
@@ -84,13 +75,6 @@ public class MeetingController {
         return new R(true, list, null);
     }
 
-    // 会议列表 编辑 根据id查询用户信息 回填表单
-    @GetMapping("/{id}")
-    public R selectById(@PathVariable String id) {
-        Apply apply = meetingServer.getById(id);
-        return new R(true, apply, null);
-    }
-
     // 会议列表 编辑 更新
     @PutMapping
     public R update(@RequestBody Apply apply) {
@@ -100,37 +84,6 @@ public class MeetingController {
         } else {
             return new R(false, null, "数据同步失败，自动刷新");
         }
-    }
-
-    // 人员库创建
-    @PostMapping("/group")
-    public R createGroup(@RequestBody Group group) {
-        Boolean flag = createGroup.createGroup(group);
-        if (flag) {
-            return new R(true, null, "创建成功");
-        } else {
-            return new R(false, null, "数据同步失败，自动刷新");
-        }
-    }
-
-    // 人员库管理
-    @GetMapping("/group")
-    public R group() {
-        String groupList = getGroupList.getGroupList();
-        return new R(true, groupList, null);
-    }
-
-    // 人员库删除
-    @DeleteMapping("/group/{id}")
-    public R deleteGroup(@PathVariable String id) {
-        // 先删除本地数据库信息
-        boolean flag = userServer.removeById(id);
-        if (flag) {
-            // 再删除腾讯云人员库内信息
-            deleteGroup.deleteGroup(id);
-            return new R(true, null, "删除成功");
-        }
-        return new R(true, null, "数据同步失败，自动刷新");
     }
 
     // 根据id查询人员信息  回填修改弹窗/会议签到权限

@@ -8,6 +8,7 @@ import com.scetop.meeting.pojo.Base64;
 import com.scetop.meeting.pojo.User;
 import com.scetop.meeting.server.IUserServer;
 import com.tencentcloudapi.iai.v20200303.models.CreatePersonResponse;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.*;
@@ -41,9 +42,9 @@ public class IndexController {
         boolean save = userServer.save(user);
         if (save) {
             // 上传腾讯云人员库
-//            String faceId = createPerson.register(user);
             CreatePersonResponse register = createPerson.register(user);
-            if (register.getFaceId() != null && register.getSimilarPersonId() == null) {
+            // 防止照片异常和同一个人重复注册
+            if (register.getFaceId() != null && Strings.isEmpty(register.getSimilarPersonId())) {
                 // 存储返回的人脸信息
                 Boolean saveFaceId = userServer.saveFaceId(register.getFaceId(), user.getId());
                 // 判断是否为管理员注册
