@@ -35,6 +35,7 @@ $(function () {
                     endTime: '',//结束时间
                     meetingDesc: '',//会议内容
                     persons: '',//选中的参会的人员
+                    initiator: '',//会议发起人
                     status: '未开始'//默认状态为未开始
                 },
                 rules: {
@@ -149,15 +150,18 @@ $(function () {
             // 人员列表选择人员
             handleSelectionChange(val) {
                 this.multipleSelection = val;
+                // this.ruleForm.persons = val;
+                // console.log(val)
             },
             // 人员列表选中确认后遍历获取所有id，并赋值给表单等待提交
             selectPerson() {
-                var str = [];
+                var str = new Array();
                 var val = this.multipleSelection;
                 for (let i = 0; i < val.length; i++) {
                     str.push(val[i].id);
                 }
-                this.ruleForm.persons = str.toString();
+                this.ruleForm.persons = str;
+                // this.ruleForm.persons = str.toString();
                 this.personsDialogVisible = false;
             },
             // 分页
@@ -173,6 +177,8 @@ $(function () {
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
+                        // 获取当前创建会议管理员，设置为会议发起者
+                        this.ruleForm.initiator = $("#userId").text();
                         axios.post("/meeting", this.ruleForm).then((res) => {
                             if (res.data.flag) {
                                 this.ruleForm = {}
@@ -243,6 +249,9 @@ $(function () {
             // 会议列表 详情
             meetingDetails(row) {
                 this.meetingDetailsDialogVisible = true;
+                axios.get("/meeting/person/" + row.initiator).then((res) => {
+                    this.ruleForm.initiator = res.data.data.name;
+                })
                 this.ruleForm = row;
                 console.log(row)
             },

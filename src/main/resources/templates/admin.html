@@ -99,7 +99,7 @@
                             <el-input type="textarea" v-model="ruleForm.meetingDesc"></el-input>
                         </el-form-item>
                         <el-form-item label="参会人员" prop="persons">
-                            <el-button type="primary" plain @click="selectPersons" v-model="ruleForm.persons">选择参会人员
+                            <el-button type="primary" plain @click="selectPersons">选择参会人员
                             </el-button>
                             <!-- 选择参会人员 -->
                             <el-dialog
@@ -202,6 +202,9 @@
                     <el-form-item label="会议名称">
                         <el-input v-model="ruleForm.meetingName"></el-input>
                     </el-form-item>
+                    <el-form-item label="发起人">
+                        <el-input v-model="ruleForm.initiator"></el-input>
+                    </el-form-item>
                     <el-form-item label="会议地点">
                         <el-input v-model="ruleForm.meetingPlace"></el-input>
                     </el-form-item>
@@ -240,14 +243,22 @@
                                 <el-option label="会议室(二)" value="会议室(二)"></el-option>
                             </el-select>
                         </el-form-item>
-                        <el-table-column align="center"
-                                         prop="startTime"
-                                         label="开始时间">
-                        </el-table-column>
-                        <el-table-column align="center"
-                                         prop="endTime"
-                                         label="结束时间">
-                        </el-table-column>
+                        <el-form-item label="开始时间" prop="startTime" required>
+                            <el-date-picker
+                                    v-model="ruleForm.startTime"
+                                    type="datetime"
+                                    value-format="yyyy-MM-dd HH:mm:ss"
+                                    placeholder="选择开始时间">
+                            </el-date-picker>
+                        </el-form-item>
+                        <el-form-item label="结束时间" prop="endTime" required>
+                            <el-date-picker
+                                    v-model="ruleForm.endTime"
+                                    type="datetime"
+                                    value-format="yyyy-MM-dd HH:mm:ss"
+                                    placeholder="选择结束时间">
+                            </el-date-picker>
+                        </el-form-item>
                         <el-form-item label="会议内容" prop="meetingDesc">
                             <el-input type="textarea" v-model="ruleForm.meetingDesc"></el-input>
                         </el-form-item>

@@ -17,6 +17,8 @@ public class Apply {
     private String startTime;
     private String endTime;
     private String meetingDesc;
-    private String persons;
+    @TableField(exist = false)
+    private String[] persons;
+    private String initiator;
     private String status;
 }

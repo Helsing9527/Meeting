@@ -6,6 +6,7 @@ import com.scetop.meeting.pojo.Apply;
 import com.scetop.meeting.pojo.Group;
 import com.scetop.meeting.pojo.User;
 import com.scetop.meeting.server.IMeetingServer;
+import com.scetop.meeting.server.IParticipateServer;
 import com.scetop.meeting.server.IUserServer;
 import com.scetop.meeting.tencentapi.group.CreateGroup;
 import com.scetop.meeting.tencentapi.group.DeleteGroup;
@@ -39,10 +40,10 @@ public class MeetingController {
         return new R(true, page, null);
     }
 
-    // 会议申请 表单
+    // 创建会议
     @PostMapping
     public R createMeeting(@RequestBody Apply apply) {
-        boolean flag = meetingServer.save(apply);
+        Boolean flag = meetingServer.createMeeting(apply);
         if (flag) {
             return new R(true, null, "会议创建成功");
         } else {
@@ -78,7 +79,7 @@ public class MeetingController {
     // 会议列表 编辑 更新
     @PutMapping
     public R update(@RequestBody Apply apply) {
-        boolean flag = meetingServer.updateById(apply);
+        Boolean flag = meetingServer.updateMeeting(apply);
         if (flag) {
             return new R(true, null, "修改成功");
         } else {
