@@ -3,14 +3,11 @@
     min-height: 400px;
 }
 
-.el-table .warning-row {
-    background: oldlace;
-}
-
-.el-table .success-row {
-    background: #f0f9eb;
-}
-
 .el-row {
     margin-top: 20px;
+}
+
+.el-col-temp {
+    margin-left: 20px;
+    border-bottom: aquamarine 3px solid;
 }

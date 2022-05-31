@@ -52,10 +52,11 @@ public class MeetingController {
     }
 
     // 会议列表 表格
-    @GetMapping
-    public R meetingTable() {
-        List<Apply> list = meetingServer.list();
-        return new R(true, list, null);
+    @GetMapping("/table/{currentPage}/{pageSize}")
+    public R meetingTable(@PathVariable Integer currentPage, @PathVariable Integer pageSize) {
+        IPage<Apply> page = meetingServer.getPage(currentPage, pageSize);
+        System.out.println(page);
+        return new R(true, page, null);
     }
 
     // 会议列表 删除
@@ -70,9 +71,10 @@ public class MeetingController {
     }
 
     // 会议列表 根据id查询所有参会人员姓名
-    @GetMapping("/ids/{ids}")
-    public R queryIds(@PathVariable List ids) {
-        List list = userServer.listByIds(ids);
+    @GetMapping("/{id}")
+    public R queryIds(@PathVariable Integer id) {
+        List<Integer> participate = meetingServer.getParticipate(id);
+        List list = userServer.listByIds(participate);
         return new R(true, list, null);
     }
 

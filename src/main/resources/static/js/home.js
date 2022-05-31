@@ -9,13 +9,15 @@ $(function () {
                 value: new Date(),
                 // 用户头像
                 url: 'https://cn.vuejs.org/images/logo.svg',
+                // Loading 加载
+                loading: true,
                 // 会议申请 人员表格
                 tableData: [],
                 // 创建会议弹窗
                 creatMeetingDialogVisible: false,
                 // 会议详情弹窗
                 meetingDetailsDialogVisible: false,
-                // 会议申请 分页工具条
+                // 会议申请 人员分页工具条
                 pagination: {//分页相关模型数据
                     currentPage: 1,//当前页码
                     pageSize: 10,//每页显示的记录数
@@ -63,8 +65,29 @@ $(function () {
                 personsDialogVisible: false,
                 // 会议列表
                 meetingList: [],
+                // 会议分页
+                meetingPagination: {//分页相关模型数据
+                    currentPage: 1,//当前页码
+                    pageSize: 10,//每页显示的记录数
+                    total: 0,//总记录数
+                    meetingName: '',//会议名称
+                    meetingPlace: '',//会议地点
+                    startTime: '',//开始时间
+                    endTime: '',//结束时间
+                    meetingDesc: '',//会议内容
+                    initiator: '', //发起者
+                    status: ''//会议状态
+                },
+                // 按条件查询会议
+                meetingFormInline: {
+                    meetingName: '',
+                    meetingPlace: '',
+                    status: ''
+                },
                 //参会人员列表
                 meetingDetailsList: [],
+                // 会议详情
+                meetingParticipateDialogVisible: false,
                 // 会议列表 编辑
                 editDialogVisible: false,
                 // 创建人员 表单/校验
@@ -136,16 +159,8 @@ $(function () {
                     this.pagination.currentPage = res.data.data.current;
                     this.pagination.pageSize = res.data.data.size;
                     this.pagination.total = res.data.data.total;
+                    this.loading = false;
                 })
-            },
-            // 变色表格
-            tableRowClassName({row, rowIndex}) {
-                if (rowIndex % 3 == 1) {
-                    return 'warning-row';
-                } else if (rowIndex % 3 != 2) {
-                    return 'success-row';
-                }
-                return '';
             },
             // 人员列表选择人员
             handleSelectionChange(val) {
@@ -164,7 +179,7 @@ $(function () {
                 // this.ruleForm.persons = str.toString();
                 this.personsDialogVisible = false;
             },
-            // 分页
+            // 人员分页
             handleSizeChange(val) {
                 this.pagination.pageSize = val;
                 this.getAll();
@@ -172,6 +187,14 @@ $(function () {
             handleCurrentChange(val) {
                 this.pagination.currentPage = val;
                 this.getAll();
+            },
+            meetingHandleSizeChange(val) {
+                this.meetingPagination.pageSize = val;
+                this.meetingTable();
+            },
+            meetingHandleCurrentChange(val) {
+                this.meetingPagination.currentPage = val;
+                this.meetingTable();
             },
             // 会议申请表单
             submitForm(formName) {
@@ -200,6 +223,10 @@ $(function () {
             resetForm(formName) {
                 this.$refs[formName].resetFields();
             },
+            // 按条件查询会议
+            meetingOnSubmit() {
+                console.log(this.meetingFormInline)
+            },
             // 会议列表
             meetingManagerList() {
                 this.index = 3;
@@ -207,9 +234,17 @@ $(function () {
             },
             // 会议列表 查询数据
             meetingTable() {
-                axios.get("/meeting").then((res) => {
-                    this.meetingList = res.data.data;
+                axios.get("/meeting/table/" + this.meetingPagination.currentPage + "/" + this.meetingPagination.pageSize).then((res) => {
+                    this.meetingList = res.data.data.records;
+                    this.meetingPagination.currentPage = res.data.data.current;
+                    this.meetingPagination.pageSize = res.data.data.size;
+                    this.meetingPagination.total = res.data.data.total;
+                    this.loading = false;
                 })
+            },
+            // 开始会议
+            handleStart(row) {
+
             },
             // 会议列表 编辑
             handleEdit(row) {
@@ -253,7 +288,21 @@ $(function () {
                     this.ruleForm.initiator = res.data.data.name;
                 })
                 this.ruleForm = row;
-                console.log(row)
+            },
+            // 参会人员
+            meetingParticipant(row) {
+                this.meetingParticipateDialogVisible = true;
+                axios.get("/meeting/" + row.id).then((res) => {
+                    var data = res.data.data;
+                    for (let datum of data) {
+                        if (datum.gender == 1) {
+                            datum.gender = '男'
+                        } else {
+                            datum.gender = '女'
+                        }
+                    }
+                    this.meetingDetailsList = res.data.data;
+                })
             },
             // 覆盖默认的上传行为，可以自定义上传的实现
             httpRequest(data) {
