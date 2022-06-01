@@ -59,10 +59,20 @@ public class MeetingController {
 
     // 会议列表 表格
     @GetMapping("/table/{currentPage}/{pageSize}")
-    public R meetingTable(@PathVariable Integer currentPage, @PathVariable Integer pageSize) {
-        IPage<Apply> page = meetingServer.getPage(currentPage, pageSize);
+    public R meetingTable(@PathVariable Integer currentPage, @PathVariable Integer pageSize, Apply apply) {
+        IPage<Apply> page = meetingServer.getPage(currentPage, pageSize, apply);
+        if (currentPage > page.getPages()) {
+            page = meetingServer.getPage((int) page.getPages(), pageSize, apply);
+        }
         return new R(true, page, null);
     }
+
+//    // 会议列表 表格
+//    @GetMapping("/table/{currentPage}/{pageSize}")
+//    public R meetingTable(@PathVariable Integer currentPage, @PathVariable Integer pageSize) {
+//        IPage<Apply> page = meetingServer.getPage(currentPage, pageSize);
+//        return new R(true, page, null);
+//    }
 
     // 会议列表 删除
     @DeleteMapping("/{id}")

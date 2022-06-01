@@ -223,7 +223,8 @@ $(function () {
             },
             // 按条件查询会议
             meetingOnSubmit() {
-                console.log(this.meetingFormInline)
+                // console.log(this.meetingFormInline)
+                this.meetingTable();
             },
             // 会议列表
             meetingManagerList() {
@@ -232,7 +233,10 @@ $(function () {
             },
             // 会议列表 查询数据
             meetingTable() {
-                axios.get("/meeting/table/" + this.meetingPagination.currentPage + "/" + this.meetingPagination.pageSize).then((res) => {
+                param = "?meetingName=" + this.meetingFormInline.meetingName;
+                param += "&meetingPlace=" + this.meetingFormInline.meetingPlace;
+                param += "&status=" + this.meetingFormInline.status;
+                axios.get("/meeting/table/" + this.meetingPagination.currentPage + "/" + this.meetingPagination.pageSize + param).then((res) => {
                     this.meetingList = res.data.data.records;
                     this.meetingPagination.currentPage = res.data.data.current;
                     this.meetingPagination.pageSize = res.data.data.size;

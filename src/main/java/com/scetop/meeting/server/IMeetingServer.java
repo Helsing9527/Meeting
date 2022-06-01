@@ -11,7 +11,7 @@ public interface IMeetingServer extends IService<Apply> {
 
     Boolean updateMeeting(Apply apply);
 
-    IPage<Apply> getPage(Integer currentPage, Integer pageSize);
+    IPage<Apply> getPage(Integer currentPage, Integer pageSize, Apply apply);
 
     List<Integer> getParticipate(Integer id);
 }

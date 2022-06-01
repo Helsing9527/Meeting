@@ -64,12 +64,14 @@
                     </el-form-item>
                     <el-form-item label="会议地点">
                         <el-select v-model="meetingFormInline.meetingPlace" placeholder="会议地点">
+                            <el-option label="-- 请选择 --" value=""></el-option>
                             <el-option label="会议室(一)" value="会议室(一)"></el-option>
                             <el-option label="会议室(二)" value="会议室(二)"></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="会议状态">
                         <el-select v-model="meetingFormInline.status" placeholder="会议状态">
+                            <el-option label="-- 请选择 --" value=""></el-option>
                             <el-option label="未开始" value="未开始"></el-option>
                             <el-option label="进行中" value="进行中"></el-option>
                             <el-option label="已完成" value="已完成"></el-option>
@@ -91,7 +93,7 @@
                         v-loading="loading"
                         element-loading-text="拼命加载中"
                         element-loading-spinner="el-icon-loading"
-                        element-loading-background="rgba(0, 0, 0, 0.8)"
+                        element-loading-background="rgba(0, 0, 0, 0.3)"
                         :data="meetingList"
                         style="width: 100%"
                         stripe>
@@ -363,7 +365,8 @@
                                 title="选择参会人员"
                                 :visible.sync="personsDialogVisible"
                                 width="70%"
-                                center>
+                                center
+                                append-to-body>
                             <template>
                                 <!-- 人员列表 -->
                                 <el-table

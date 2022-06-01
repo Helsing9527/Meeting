@@ -9,6 +9,7 @@ import com.scetop.meeting.pojo.Apply;
 import com.scetop.meeting.pojo.Participate;
 import com.scetop.meeting.server.IMeetingServer;
 import com.scetop.meeting.server.IParticipateServer;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,9 +45,13 @@ public class MeetingServerImpl extends ServiceImpl<MeetingMapper, Apply> impleme
     }
 
     @Override
-    public IPage<Apply> getPage(Integer currentPage, Integer pageSize) {
+    public IPage<Apply> getPage(Integer currentPage, Integer pageSize, Apply apply) {
+        LambdaQueryWrapper<Apply> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.like(Strings.isNotEmpty(apply.getMeetingName()), Apply::getMeetingName, apply.getMeetingName());
+        lambdaQueryWrapper.like(Strings.isNotEmpty(apply.getMeetingPlace()), Apply::getMeetingPlace, apply.getMeetingPlace());
+        lambdaQueryWrapper.like(Strings.isNotEmpty(apply.getStatus()), Apply::getStatus, apply.getStatus());
         IPage<Apply> page = new Page<>(currentPage, pageSize);
-        meetingMapper.selectPage(page,null);
+        meetingMapper.selectPage(page, lambdaQueryWrapper);
         return page;
     }
 
@@ -73,7 +78,10 @@ public class MeetingServerImpl extends ServiceImpl<MeetingMapper, Apply> impleme
         for (String person : persons) {
             participate.setId(null);
             participate.setUser_id(Integer.parseInt(person));
-            boolean save = participateServer.save(participate);
+            flag = participateServer.save(participate);
+            if (!flag) {
+                return false;
+            }
         }
         return flag;
     }
