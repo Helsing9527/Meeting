@@ -1,9 +1,12 @@
 package com.scetop.meeting.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.scetop.meeting.controller.util.R;
 import com.scetop.meeting.pojo.Apply;
 import com.scetop.meeting.pojo.Group;
+import com.scetop.meeting.pojo.Participate;
 import com.scetop.meeting.pojo.User;
 import com.scetop.meeting.server.IMeetingServer;
 import com.scetop.meeting.server.IParticipateServer;
@@ -33,6 +36,9 @@ public class MeetingController {
     @Autowired
     private DeletePerson deletePerson;
 
+    @Autowired
+    private IParticipateServer participateServer;
+
     // 会议申请 人员列表 分页
     @GetMapping("/{currentPage}/{pageSize}")
     public R queryAll(@PathVariable Integer currentPage, @PathVariable Integer pageSize) {
@@ -55,7 +61,6 @@ public class MeetingController {
     @GetMapping("/table/{currentPage}/{pageSize}")
     public R meetingTable(@PathVariable Integer currentPage, @PathVariable Integer pageSize) {
         IPage<Apply> page = meetingServer.getPage(currentPage, pageSize);
-        System.out.println(page);
         return new R(true, page, null);
     }
 
@@ -87,6 +92,26 @@ public class MeetingController {
         } else {
             return new R(false, null, "数据同步失败，自动刷新");
         }
+    }
+
+    // 开始会议
+    @PutMapping("/startMeeting/{id}")
+    public R updateStatus(@PathVariable Integer id) {
+        Apply apply = meetingServer.getById(id);
+        if ("未开始".equals(apply.getStatus())) {
+            LambdaUpdateWrapper<Apply> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+            lambdaUpdateWrapper.set(Apply::getStatus, "进行中");
+            lambdaUpdateWrapper.eq(Apply::getId, id);
+            boolean flag = meetingServer.update(lambdaUpdateWrapper);
+            if (flag) {
+                return new R(true, null, "开始会议，开放签到");
+            } else {
+                return new R(false, null, "数据同步失败，自动刷新");
+            }
+        } else if ("进行中".equals(apply.getStatus())) {
+            return new R(true, null, "会议进行中");
+        }
+        return new R(false, null, "会议已结束");
     }
 
     // 根据id查询人员信息  回填修改弹窗/会议签到权限

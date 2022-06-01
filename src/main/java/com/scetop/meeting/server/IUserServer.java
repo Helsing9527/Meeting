@@ -7,6 +7,5 @@ import com.scetop.meeting.pojo.User;
 public interface IUserServer extends IService<User> {
     Boolean saveFaceId(String faceId, Integer id);
     IPage<User> getPage(Integer currentPage, Integer pageSize);
-
     Boolean saveAdminCode(String adminCode, Integer id);
 }

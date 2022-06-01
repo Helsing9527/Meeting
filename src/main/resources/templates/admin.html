@@ -46,10 +46,6 @@
                     <span slot="title">人员管理</span>
                 </el-menu-item>
                 <el-menu-item index="4" @click="setIndex(8)">
-                    <i class="el-icon-data-line"></i>
-                    <span slot="title">开始会议</span>
-                </el-menu-item>
-                <el-menu-item index="5" @click="setIndex(9)">
                     <i class="el-icon-setting"></i>
                     <span slot="title">设置</span>
                 </el-menu-item>
@@ -200,7 +196,8 @@
                             title="选择参会人员"
                             :visible.sync="personsDialogVisible"
                             width="70%"
-                            center>
+                            center
+                            append-to-body>
                         <template>
                             <!-- 人员列表 -->
                             <el-table
@@ -571,29 +568,6 @@
                     <el-button plain @click="personDialogVisible = false">取 消</el-button>
                     <el-button plain type="primary" @click="personHandleUpdate">确 定</el-button>
                 </span>
-            </el-dialog>
-        </el-col>
-        <!--开始会议-->
-        <el-col v-if="index == 8">
-            <template>
-                <el-row type="flex" justify="center" align="middle">
-                    <el-col :span="2">
-                        <el-button type="primary" plain @click="startMeeting">开始会议</el-button>
-                    </el-col>
-                </el-row>
-            </template>
-            <!-- 拍照弹窗 -->
-            <el-dialog
-                    title="Meeting"
-                    :visible.sync="cameraDialogVisible"
-                    @close="closeCamera"
-                    center>
-                <canvas ref="canvas" width="640" height="480" style="display: none"></canvas>
-                <video ref="video" width="100%" height="480" autoplay></video>
-                <span slot="footer" class="dialog-footer">
-            <el-button plain @click="cameraDialogVisible = false">取消</el-button>
-            <el-button plain type="primary" @click="photo">Go!</el-button>
-        </span>
             </el-dialog>
         </el-col>
     </el-row>

@@ -141,11 +141,12 @@ $(function () {
             },
             // 会议申请 人员列表
             selectPersons() {
-                this.getAll();
                 this.personsDialogVisible = true;
+                this.getAll();
             },
             // 分页查询数据库人员并回填列表
             getAll() {
+
                 axios.get("/meeting/" + this.pagination.currentPage + "/" + this.pagination.pageSize).then((res) => {
                     var records = res.data.data.records;
                     for (let record of records) {
@@ -165,8 +166,6 @@ $(function () {
             // 人员列表选择人员
             handleSelectionChange(val) {
                 this.multipleSelection = val;
-                // this.ruleForm.persons = val;
-                // console.log(val)
             },
             // 人员列表选中确认后遍历获取所有id，并赋值给表单等待提交
             selectPerson() {
@@ -176,7 +175,6 @@ $(function () {
                     str.push(val[i].id);
                 }
                 this.ruleForm.persons = str;
-                // this.ruleForm.persons = str.toString();
                 this.personsDialogVisible = false;
             },
             // 人员分页
@@ -244,7 +242,19 @@ $(function () {
             },
             // 开始会议
             handleStart(row) {
-
+                if (row.initiator == $("#userId").text()) {
+                    axios.put("/meeting/startMeeting/" + row.id).then((res) => {
+                        if (res.data.flag) {
+                            this.$message.success(res.data.msg);
+                        } else {
+                            this.$message.error(res.data.msg);
+                        }
+                    }).finally(() => {
+                        this.meetingTable();
+                    })
+                } else {
+                    this.$message.error('无权开始会议')
+                }
             },
             // 会议列表 编辑
             handleEdit(row) {
@@ -405,18 +415,6 @@ $(function () {
                     })
                 }).catch(() => {
                     this.$message.info("取消操作")
-                })
-            },
-            // 开始会议
-            startMeeting() {
-                axios.get("/meeting/person/" + $("#userId").text()).then((res) => {
-                    if (res.data.data.status == 1) {
-                        this.callCamera();
-                        this.cameraDialogVisible = true;
-                        this.$message.success("签到完成");
-                    } else {
-                        this.$message.error("当前没有会议");
-                    }
                 })
             },
             // 拍照 Go!
