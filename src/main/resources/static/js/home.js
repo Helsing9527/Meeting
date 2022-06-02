@@ -146,7 +146,6 @@ $(function () {
             },
             // 分页查询数据库人员并回填列表
             getAll() {
-
                 axios.get("/meeting/" + this.pagination.currentPage + "/" + this.pagination.pageSize).then((res) => {
                     var records = res.data.data.records;
                     for (let record of records) {
@@ -223,7 +222,6 @@ $(function () {
             },
             // 按条件查询会议
             meetingOnSubmit() {
-                // console.log(this.meetingFormInline)
                 this.meetingTable();
             },
             // 会议列表
@@ -264,6 +262,18 @@ $(function () {
             handleEdit(row) {
                 this.editDialogVisible = true;
                 this.ruleForm = row;
+                axios.get("/meeting/" + row.id).then((res) => {
+                    if (res.data.flag) {
+                        var data = res.data.data;
+                        for (let datum of data) {
+                            this.multipleSelection.push(datum.id);
+                        }
+                        this.ruleForm.persons = this.multipleSelection;
+                    }
+                }).finally(()=>{
+                    this.multipleSelection = []
+                })
+
             },
             // 会议列表 修改
             updateForm() {
@@ -353,7 +363,6 @@ $(function () {
             },
             // 创建人员 注册
             registerForm(formName) {
-                console.log(this.personForm)
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         axios.post("/index", this.personForm).then((res) => {
@@ -435,7 +444,7 @@ $(function () {
                 // 转base64格式、图片格式转换、图片质量压缩---支持两种格式image/jpeg+image/png
                 let imgBase64 = this.$refs['canvas'].toDataURL('image/jpeg', 0.7);
                 this.loginBase64 = imgBase64;
-                console.log(imgBase64)
+                // console.log(imgBase64)
             },
             // 调用摄像头
             callCamera() {

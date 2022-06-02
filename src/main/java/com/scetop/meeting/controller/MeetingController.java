@@ -89,6 +89,9 @@ public class MeetingController {
     @GetMapping("/{id}")
     public R queryIds(@PathVariable Integer id) {
         List<Integer> participate = meetingServer.getParticipate(id);
+        if (participate.isEmpty()) {
+            return new R(false, null, null);
+        }
         List list = userServer.listByIds(participate);
         return new R(true, list, null);
     }

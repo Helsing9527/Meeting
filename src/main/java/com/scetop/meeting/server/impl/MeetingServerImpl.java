@@ -40,7 +40,9 @@ public class MeetingServerImpl extends ServiceImpl<MeetingMapper, Apply> impleme
         lambdaQueryWrapper.eq(Participate::getApply_id, apply.getId());
         participateServer.remove(lambdaQueryWrapper);
         // 再存入新的参会人员
-        saveParticipate(apply);
+        if (apply.getPersons() != null) {
+            saveParticipate(apply);
+        }
         return flag;
     }
 
