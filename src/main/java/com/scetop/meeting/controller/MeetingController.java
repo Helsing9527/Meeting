@@ -41,8 +41,11 @@ public class MeetingController {
 
     // 会议申请 人员列表 分页
     @GetMapping("/{currentPage}/{pageSize}")
-    public R queryAll(@PathVariable Integer currentPage, @PathVariable Integer pageSize) {
-        IPage<User> page = userServer.getPage(currentPage, pageSize);
+    public R queryAll(@PathVariable Integer currentPage, @PathVariable Integer pageSize, User user) {
+        IPage<User> page = userServer.getPage(currentPage, pageSize, user);
+        if (currentPage > page.getPages()) {
+            page = userServer.getPage((int) page.getPages(), pageSize, user);
+        }
         return new R(true, page, null);
     }
 
@@ -66,13 +69,6 @@ public class MeetingController {
         }
         return new R(true, page, null);
     }
-
-//    // 会议列表 表格
-//    @GetMapping("/table/{currentPage}/{pageSize}")
-//    public R meetingTable(@PathVariable Integer currentPage, @PathVariable Integer pageSize) {
-//        IPage<Apply> page = meetingServer.getPage(currentPage, pageSize);
-//        return new R(true, page, null);
-//    }
 
     // 会议列表 删除
     @DeleteMapping("/{id}")

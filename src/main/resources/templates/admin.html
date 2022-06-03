@@ -424,10 +424,30 @@
 
         <!--人员管理-->
         <el-col v-if="index == 4">
-            <template>
-                <!--创建人员-->
-                <el-button plain type="primary" @click="registerDialogVisible = true">员工入职</el-button>
+            <!--按条件查询-->
+            <div class="el-col-temp">
+                <!-- 按条件查询 -->
+                <el-form :inline="true" :model="personFormInline" class="demo-form-inline">
+                    <el-form-item label="姓名">
+                        <el-input v-model="personFormInline.name" placeholder="姓名"></el-input>
+                    </el-form-item>
+                    <el-form-item label="部门">
+                        <el-input v-model="personFormInline.dept" placeholder="部门"></el-input>
+                    </el-form-item>
+                    <el-form-item label="职位">
+                        <el-input v-model="personFormInline.post" placeholder="职位"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button plain type="primary" @click="personOnSubmit">查询</el-button>
+                    </el-form-item>
+                    <el-form-item>
+                        <!--创建人员-->
+                        <el-button plain type="success" @click="registerDialogVisible = true">员工入职</el-button>
+                    </el-form-item>
+                </el-form>
+            </div>
 
+            <template>
                 <el-dialog
                         title="注册员工个人信息"
                         :visible.sync="registerDialogVisible"
@@ -495,7 +515,7 @@
                         @selection-change="handleSelectionChange">
                     <el-table-column prop="name" label="姓名" align="center"></el-table-column>
                     <el-table-column prop="dept" label="部门" align="center"></el-table-column>
-                    <el-table-column prop="post" label="部门" align="center"></el-table-column>
+                    <el-table-column prop="post" label="职位" align="center"></el-table-column>
                     <el-table-column prop="gender" label="性别" align="center"></el-table-column>
                     <el-table-column prop="adminCode" label="管理员" align="center"></el-table-column>
                     <el-table-column label="操作" align="center">

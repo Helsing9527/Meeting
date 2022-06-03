@@ -10,4 +10,5 @@
 .el-col-temp {
     margin-left: 20px;
     border-bottom: aquamarine 3px solid;
+    float: none;
 }

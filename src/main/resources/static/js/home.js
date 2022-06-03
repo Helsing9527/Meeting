@@ -17,7 +17,7 @@ $(function () {
                 creatMeetingDialogVisible: false,
                 // 会议详情弹窗
                 meetingDetailsDialogVisible: false,
-                // 会议申请 人员分页工具条
+                // 人员分页工具条
                 pagination: {//分页相关模型数据
                     currentPage: 1,//当前页码
                     pageSize: 10,//每页显示的记录数
@@ -121,6 +121,12 @@ $(function () {
                 },
                 // 人员编辑弹窗
                 personDialogVisible: false,
+                // 按条件查询会议
+                personFormInline: {
+                    name: '',
+                    dept: '',
+                    post: ''
+                },
                 // 相机弹窗
                 cameraDialogVisible: false,
                 // 签到位图
@@ -146,7 +152,10 @@ $(function () {
             },
             // 分页查询数据库人员并回填列表
             getAll() {
-                axios.get("/meeting/" + this.pagination.currentPage + "/" + this.pagination.pageSize).then((res) => {
+                param = "?name=" + this.personFormInline.name;
+                param += "&dept=" + this.personFormInline.dept;
+                param += "&post=" + this.personFormInline.post;
+                axios.get("/meeting/" + this.pagination.currentPage + "/" + this.pagination.pageSize + param).then((res) => {
                     var records = res.data.data.records;
                     for (let record of records) {
                         if (record.gender == 1) {
@@ -155,7 +164,7 @@ $(function () {
                             record.gender = '女'
                         }
                     }
-                    this.tableData = res.data.data.records;
+                    this.tableData = records;
                     this.pagination.currentPage = res.data.data.current;
                     this.pagination.pageSize = res.data.data.size;
                     this.pagination.total = res.data.data.total;
@@ -271,7 +280,7 @@ $(function () {
                         this.ruleForm.persons = this.multipleSelection;
                     }
                 }).finally(()=>{
-                    this.multipleSelection = []
+                    this.multipleSelection = [];
                 })
 
             },
@@ -385,6 +394,10 @@ $(function () {
             // 人员列表
             persons() {
                 this.setIndex(4);
+                this.getAll();
+            },
+            // 分页查询 人员列表
+            personOnSubmit() {
                 this.getAll();
             },
             // 人员修改 弹窗
