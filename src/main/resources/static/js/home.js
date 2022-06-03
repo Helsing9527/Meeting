@@ -11,24 +11,11 @@ $(function () {
                 url: 'https://cn.vuejs.org/images/logo.svg',
                 // Loading 加载
                 loading: true,
-                // 会议申请 人员表格
-                tableData: [],
+
                 // 创建会议弹窗
                 creatMeetingDialogVisible: false,
                 // 会议详情弹窗
                 meetingDetailsDialogVisible: false,
-                // 人员分页工具条
-                pagination: {//分页相关模型数据
-                    currentPage: 1,//当前页码
-                    pageSize: 10,//每页显示的记录数
-                    total: 0,//总记录数
-                    name: '',//姓名
-                    dept: '',//部门
-                    post: '',//职位
-                    gender: ''//性别
-                },
-                // 人员确认后临时存储
-                multipleSelection: [],
                 // 会议申请 表单/表单校验
                 ruleForm: {
                     meetingName: '',//会议名称
@@ -78,7 +65,7 @@ $(function () {
                     initiator: '', //发起者
                     status: ''//会议状态
                 },
-                // 按条件查询会议
+                // 会议列表 按条件查询
                 meetingFormInline: {
                     meetingName: '',
                     meetingPlace: '',
@@ -86,10 +73,25 @@ $(function () {
                 },
                 //参会人员列表
                 meetingDetailsList: [],
-                // 会议详情
+                // 会议详情 弹窗
                 meetingParticipateDialogVisible: false,
-                // 会议列表 编辑
+                // 会议列表 会议编辑
                 editDialogVisible: false,
+
+                // 人员管理-人员列表/选择人员-人员列表
+                tableData: [],
+                // 人员分页工具条
+                pagination: {//分页相关模型数据
+                    currentPage: 1,//当前页码
+                    pageSize: 10,//每页显示的记录数
+                    total: 0,//总记录数
+                    name: '',//姓名
+                    dept: '',//部门
+                    post: '',//职位
+                    gender: ''//性别
+                },
+                // 人员确认后临时存储
+                multipleSelection: [],
                 // 创建人员 表单/校验
                 registerDialogVisible: false,
                 personForm: {
@@ -119,14 +121,15 @@ $(function () {
                         {required: true, message: '请拍照或上传照片', trigger: 'input'}
                     ]
                 },
-                // 人员编辑弹窗
+                // 人员编辑 弹窗
                 personDialogVisible: false,
-                // 按条件查询会议
+                // 人员列表 按条件查询
                 personFormInline: {
                     name: '',
                     dept: '',
                     post: ''
                 },
+
                 // 相机弹窗
                 cameraDialogVisible: false,
                 // 签到位图
@@ -145,63 +148,17 @@ $(function () {
             setIndex(val) {
                 this.index = val;
             },
-            // 会议申请 人员列表
-            selectPersons() {
-                this.personsDialogVisible = true;
+            // 导航 - 人员列表
+            persons() {
+                this.setIndex(4);
                 this.getAll();
             },
-            // 分页查询数据库人员并回填列表
-            getAll() {
-                param = "?name=" + this.personFormInline.name;
-                param += "&dept=" + this.personFormInline.dept;
-                param += "&post=" + this.personFormInline.post;
-                axios.get("/meeting/" + this.pagination.currentPage + "/" + this.pagination.pageSize + param).then((res) => {
-                    var records = res.data.data.records;
-                    for (let record of records) {
-                        if (record.gender == 1) {
-                            record.gender = '男'
-                        } else {
-                            record.gender = '女'
-                        }
-                    }
-                    this.tableData = records;
-                    this.pagination.currentPage = res.data.data.current;
-                    this.pagination.pageSize = res.data.data.size;
-                    this.pagination.total = res.data.data.total;
-                    this.loading = false;
-                })
-            },
-            // 人员列表选择人员
-            handleSelectionChange(val) {
-                this.multipleSelection = val;
-            },
-            // 人员列表选中确认后遍历获取所有id，并赋值给表单等待提交
-            selectPerson() {
-                var str = new Array();
-                var val = this.multipleSelection;
-                for (let i = 0; i < val.length; i++) {
-                    str.push(val[i].id);
-                }
-                this.ruleForm.persons = str;
-                this.personsDialogVisible = false;
-            },
-            // 人员分页
-            handleSizeChange(val) {
-                this.pagination.pageSize = val;
-                this.getAll();
-            },
-            handleCurrentChange(val) {
-                this.pagination.currentPage = val;
-                this.getAll();
-            },
-            meetingHandleSizeChange(val) {
-                this.meetingPagination.pageSize = val;
+            // 导航 - 会议列表
+            meetingManagerList() {
+                this.index = 3;
                 this.meetingTable();
             },
-            meetingHandleCurrentChange(val) {
-                this.meetingPagination.currentPage = val;
-                this.meetingTable();
-            },
+
             // 会议申请表单
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
@@ -225,17 +182,27 @@ $(function () {
                     }
                 });
             },
-            // 重置表单
-            resetForm(formName) {
-                this.$refs[formName].resetFields();
+            // 会议申请 人员列表
+            selectPersons() {
+                this.personsDialogVisible = true;
+                this.getAll();
+            },
+            // 人员列表选择人员
+            handleSelectionChange(val) {
+                this.multipleSelection = val;
+            },
+            // 人员列表选中确认后遍历获取所有id，并赋值给表单等待提交
+            selectPerson() {
+                var str = new Array();
+                var val = this.multipleSelection;
+                for (let i = 0; i < val.length; i++) {
+                    str.push(val[i].id);
+                }
+                this.ruleForm.persons = str;
+                this.personsDialogVisible = false;
             },
             // 按条件查询会议
             meetingOnSubmit() {
-                this.meetingTable();
-            },
-            // 会议列表
-            meetingManagerList() {
-                this.index = 3;
                 this.meetingTable();
             },
             // 会议列表 查询数据
@@ -249,6 +216,38 @@ $(function () {
                     this.meetingPagination.pageSize = res.data.data.size;
                     this.meetingPagination.total = res.data.data.total;
                     this.loading = false;
+                })
+            },
+            // 会议列表 分页
+            meetingHandleSizeChange(val) {
+                this.meetingPagination.pageSize = val;
+                this.meetingTable();
+            },
+            meetingHandleCurrentChange(val) {
+                this.meetingPagination.currentPage = val;
+                this.meetingTable();
+            },
+            // 会议列表 会议详情
+            meetingDetails(row) {
+                this.meetingDetailsDialogVisible = true;
+                axios.get("/meeting/person/" + row.initiator).then((res) => {
+                    this.ruleForm.initiator = res.data.data.name;
+                })
+                this.ruleForm = row;
+            },
+            // 参会人员
+            meetingParticipant(row) {
+                this.meetingParticipateDialogVisible = true;
+                axios.get("/meeting/" + row.id).then((res) => {
+                    var data = res.data.data;
+                    for (let datum of data) {
+                        if (datum.gender == 1) {
+                            datum.gender = '男'
+                        } else {
+                            datum.gender = '女'
+                        }
+                    }
+                    this.meetingDetailsList = res.data.data;
                 })
             },
             // 开始会议
@@ -267,7 +266,7 @@ $(function () {
                     this.$message.error('无权开始会议')
                 }
             },
-            // 会议列表 编辑
+            // 会议列表 编辑 回填信息
             handleEdit(row) {
                 this.editDialogVisible = true;
                 this.ruleForm = row;
@@ -282,9 +281,8 @@ $(function () {
                 }).finally(()=>{
                     this.multipleSelection = [];
                 })
-
             },
-            // 会议列表 修改
+            // 会议列表 编辑
             updateForm() {
                 axios.put("/meeting", this.ruleForm).then((res) => {
                     if (res.data.flag) {
@@ -314,61 +312,36 @@ $(function () {
                     this.$message.info("取消操作")
                 })
             },
-            // 会议列表 详情
-            meetingDetails(row) {
-                this.meetingDetailsDialogVisible = true;
-                axios.get("/meeting/person/" + row.initiator).then((res) => {
-                    this.ruleForm.initiator = res.data.data.name;
-                })
-                this.ruleForm = row;
-            },
-            // 参会人员
-            meetingParticipant(row) {
-                this.meetingParticipateDialogVisible = true;
-                axios.get("/meeting/" + row.id).then((res) => {
-                    var data = res.data.data;
-                    for (let datum of data) {
-                        if (datum.gender == 1) {
-                            datum.gender = '男'
+
+            // 人员列表
+            getAll() {
+                param = "?name=" + this.personFormInline.name;
+                param += "&dept=" + this.personFormInline.dept;
+                param += "&post=" + this.personFormInline.post;
+                axios.get("/meeting/" + this.pagination.currentPage + "/" + this.pagination.pageSize + param).then((res) => {
+                    var records = res.data.data.records;
+                    for (let record of records) {
+                        if (record.gender == 1) {
+                            record.gender = '男'
                         } else {
-                            datum.gender = '女'
+                            record.gender = '女'
                         }
                     }
-                    this.meetingDetailsList = res.data.data;
+                    this.tableData = records;
+                    this.pagination.currentPage = res.data.data.current;
+                    this.pagination.pageSize = res.data.data.size;
+                    this.pagination.total = res.data.data.total;
+                    this.loading = false;
                 })
             },
-            // 覆盖默认的上传行为，可以自定义上传的实现
-            httpRequest(data) {
-                // 转base64
-                this.getBase64(data.file).then(resBase64 => {
-                    //直接拿到base64信息
-                    this.fileBase64 = resBase64;
-                    this.personForm.base64 = this.fileBase64;
-                })
-                var that = this
-                setTimeout(function () {
-                    that.uploadPercent = 100
-                }, 2000)
+            // 人员 分页
+            handleSizeChange(val) {
+                this.pagination.pageSize = val;
+                this.getAll();
             },
-            // 转base64编码
-            getBase64(file) {
-                return new Promise((resolve, reject) => {
-                    let reader = new FileReader();
-                    let fileResult = "";
-                    reader.readAsDataURL(file);
-                    //开始转
-                    reader.onload = function () {
-                        fileResult = reader.result;
-                    };
-                    //转失败
-                    reader.onerror = function (error) {
-                        reject(error);
-                    };
-                    //转结束咱就 resolve 出去
-                    reader.onloadend = function () {
-                        resolve(fileResult);
-                    };
-                });
+            handleCurrentChange(val) {
+                this.pagination.currentPage = val;
+                this.getAll();
             },
             // 创建人员 注册
             registerForm(formName) {
@@ -390,11 +363,6 @@ $(function () {
                         return false;
                     }
                 });
-            },
-            // 人员列表
-            persons() {
-                this.setIndex(4);
-                this.getAll();
             },
             // 分页查询 人员列表
             personOnSubmit() {
@@ -442,6 +410,45 @@ $(function () {
                 }).catch(() => {
                     this.$message.info("取消操作")
                 })
+            },
+
+            // 重置表单
+            resetForm(formName) {
+                this.$refs[formName].resetFields();
+            },
+
+            // 覆盖默认的上传行为，可以自定义上传的实现
+            httpRequest(data) {
+                // 转base64
+                this.getBase64(data.file).then(resBase64 => {
+                    //直接拿到base64信息
+                    this.fileBase64 = resBase64;
+                    this.personForm.base64 = this.fileBase64;
+                })
+                var that = this
+                setTimeout(function () {
+                    that.uploadPercent = 100
+                }, 2000)
+            },
+            // 转base64编码
+            getBase64(file) {
+                return new Promise((resolve, reject) => {
+                    let reader = new FileReader();
+                    let fileResult = "";
+                    reader.readAsDataURL(file);
+                    //开始转
+                    reader.onload = function () {
+                        fileResult = reader.result;
+                    };
+                    //转失败
+                    reader.onerror = function (error) {
+                        reject(error);
+                    };
+                    //转结束咱就 resolve 出去
+                    reader.onloadend = function () {
+                        resolve(fileResult);
+                    };
+                });
             },
             // 拍照 Go!
             photo() {
