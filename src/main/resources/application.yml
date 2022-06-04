@@ -26,6 +26,7 @@ mybatis-plus:
       id-type: auto
   configuration:
     map-underscore-to-camel-case: false
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 #腾讯 SecretId/SecretKey
 SecretId: AKIDYuznLcbJkunPkpc8NL2TcXEfpiLhncBT

@@ -7,5 +7,5 @@ import lombok.Data;
  */
 @Data
 public class Base64 {
-    private String loginBase64;
+    private String imgBase64;
 }

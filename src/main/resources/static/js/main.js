@@ -10,7 +10,7 @@ $(function () {
                 // 管理员注册弹窗
                 codeDialogVisible: false,
                 // 登录位图
-                loginBase64: '',
+                imgBase64: '',
                 // 注册表单
                 ruleForm: {
                     name: '',
@@ -65,7 +65,7 @@ $(function () {
                 // 转base64格式、图片格式转换、图片质量压缩---支持两种格式image/jpeg+image/png
                 let imgBase64 = this.$refs['canvas'].toDataURL('image/jpeg', 0.7);
                 this.ruleForm.base64 = imgBase64;
-                this.loginBase64 = imgBase64;
+                this.imgBase64 = imgBase64;
             },
             // 关闭摄像头
             closeCamera() {
@@ -108,7 +108,7 @@ $(function () {
             // 登录按钮
             login() {
                 this.photo();
-                axios.post("/index/login", {"loginBase64": this.loginBase64}).then((res) => {
+                axios.post("/index/login", {"imgBase64": this.imgBase64}).then((res) => {
                     if (res.data.flag) {
                         // 登录成功
                         this.$message.success(res.data.msg);

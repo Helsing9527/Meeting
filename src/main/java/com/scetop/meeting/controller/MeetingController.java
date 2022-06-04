@@ -4,16 +4,14 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.scetop.meeting.controller.util.R;
-import com.scetop.meeting.pojo.Apply;
-import com.scetop.meeting.pojo.Group;
-import com.scetop.meeting.pojo.Participate;
-import com.scetop.meeting.pojo.User;
+import com.scetop.meeting.pojo.*;
 import com.scetop.meeting.server.IMeetingServer;
 import com.scetop.meeting.server.IParticipateServer;
 import com.scetop.meeting.server.IUserServer;
 import com.scetop.meeting.tencentapi.group.CreateGroup;
 import com.scetop.meeting.tencentapi.group.DeleteGroup;
 import com.scetop.meeting.tencentapi.group.GetGroupList;
+import com.scetop.meeting.tencentapi.person.CreatePerson;
 import com.scetop.meeting.tencentapi.person.DeletePerson;
 import com.scetop.meeting.tencentapi.person.ModifyPersonBaseInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,9 +34,6 @@ public class MeetingController {
     @Autowired
     private DeletePerson deletePerson;
 
-    @Autowired
-    private IParticipateServer participateServer;
-
     // 会议申请 人员列表 分页
     @GetMapping("/{currentPage}/{pageSize}")
     public R queryAll(@PathVariable Integer currentPage, @PathVariable Integer pageSize, User user) {
@@ -55,9 +50,8 @@ public class MeetingController {
         Boolean flag = meetingServer.createMeeting(apply);
         if (flag) {
             return new R(true, null, "会议创建成功");
-        } else {
-            return new R(false, null, "会议创建失败");
         }
+        return new R(false, null, "会议创建失败");
     }
 
     // 会议列表 表格
@@ -76,9 +70,8 @@ public class MeetingController {
         boolean flag = meetingServer.removeById(id);
         if (flag) {
             return new R(true, null, "删除成功");
-        } else {
-            return new R(false, null, "数据同步失败，自动刷新");
         }
+        return new R(false, null, "数据同步失败，自动刷新");
     }
 
     // 会议列表 根据id查询所有参会人员姓名
@@ -98,9 +91,8 @@ public class MeetingController {
         Boolean flag = meetingServer.updateMeeting(apply);
         if (flag) {
             return new R(true, null, "修改成功");
-        } else {
-            return new R(false, null, "数据同步失败，自动刷新");
         }
+        return new R(false, null, "数据同步失败，自动刷新");
     }
 
     // 开始会议
@@ -140,9 +132,8 @@ public class MeetingController {
         if (flag) {
             modifyPersonBaseInfo.modifyPersonBaseInfo(user);
             return new R(true, null, "修改成功");
-        } else {
-            return new R(false, null, "数据同步失败，自动刷新");
         }
+        return new R(false, null, "数据同步失败，自动刷新");
     }
 
     // 删除人员信息
@@ -152,8 +143,18 @@ public class MeetingController {
         if (flag) {
             deletePerson.deletePerson(id);
             return new R(true, null, "删除成功");
-        } else {
-            return new R(false, null, "数据同步失败，自动刷新");
         }
+        return new R(false, null, "数据同步失败，自动刷新");
+    }
+
+    // 签到管理
+    @PostMapping("/signIn")
+    public R signIn(@RequestBody Base64 imgBase64) {
+        System.out.println(imgBase64);
+        Boolean flag = meetingServer.signIn(imgBase64.getImgBase64());
+        if (flag) {
+            return new R(true, null, "签到成功！");
+        }
+        return new R(false, null, "签到失败");
     }
 }

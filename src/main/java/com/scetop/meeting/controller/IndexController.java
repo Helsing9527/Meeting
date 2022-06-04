@@ -65,16 +65,16 @@ public class IndexController {
 
     // 人脸识别登录
     @PostMapping("/login")
-    public R loginUser(@RequestBody Base64 loginBase64, HttpServletRequest request) {
+    public R loginUser(@RequestBody Base64 imgBase64, HttpServletRequest request) {
         HttpSession session = request.getSession();
         // 校验图片大小大于10k，小于10k返回登录失败
-        if (loginBase64.getLoginBase64().length() / 1024 >= 10) {
+        if (imgBase64.getImgBase64().length() / 1024 >= 10) {
             int userId = 0;
             // 获取人员库所有人员id
             List<String> personList = getPersonList.getPersonList();
             // 遍历调用验证人员
             for (String personId : personList) {
-                Boolean flag = verifyFace.verifyFace(loginBase64.getLoginBase64(), personId);
+                Boolean flag = verifyFace.verifyFace(imgBase64.getImgBase64(), personId);
                 // 匹配人员返回人员id
                 if (flag) {
                     userId = Integer.parseInt(personId);

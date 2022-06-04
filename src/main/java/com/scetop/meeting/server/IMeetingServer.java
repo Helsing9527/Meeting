@@ -1,6 +1,5 @@
 package com.scetop.meeting.server;
 
-import com.baomidou.mybatisplus.annotation.InterceptorIgnore;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.scetop.meeting.pojo.Apply;
@@ -16,4 +15,6 @@ public interface IMeetingServer extends IService<Apply> {
     IPage<Apply> getPage(Integer currentPage, Integer pageSize, Apply apply);
 
     List<Integer> getParticipate(Integer id);
+
+    Boolean signIn(String imgBase64);
 }

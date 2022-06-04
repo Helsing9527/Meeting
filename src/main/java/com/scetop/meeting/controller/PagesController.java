@@ -42,4 +42,7 @@ public class PagesController {
         return "index";
     }
 
+    // 签到页
+    @RequestMapping("/signIn")
+    public String signIn() {return "signIn";}
 }

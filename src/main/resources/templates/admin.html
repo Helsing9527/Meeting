@@ -37,15 +37,19 @@
                     <i class="el-icon-menu"></i>
                     <span slot="title">欢迎页</span>
                 </el-menu-item>
-                <el-menu-item index="2" @click="meetingManagerList">
+                <el-menu-item index="2" @click="meetingManagement">
                     <i class="el-icon-chat-dot-square"></i>
                     <span slot="title">会议管理</span>
                 </el-menu-item>
-                <el-menu-item index="3" @click="persons">
+                <el-menu-item index="3" @click="personsManagement">
                     <i class="el-icon-user"></i>
                     <span slot="title">人员管理</span>
                 </el-menu-item>
-                <el-menu-item index="4" @click="setIndex(8)">
+                <el-menu-item index="4" @click="signInManagement">
+                    <i class="el-icon-pie-chart"></i>
+                    <span slot="title">签到管理</span>
+                </el-menu-item>
+                <el-menu-item index="5" @click="setIndex(8)">
                     <i class="el-icon-setting"></i>
                     <span slot="title">设置</span>
                 </el-menu-item>
@@ -55,7 +59,7 @@
         <el-calendar v-model="value" v-if="index == 1"></el-calendar>
         <!--判断是否为管理员，管理员开放管理权限-->
         <!--会议列表-->
-        <el-col v-if="index == 3">
+        <el-col v-if="index == 2">
             <div class="el-col-temp">
                 <!-- 按条件查询 -->
                 <el-form :inline="true" :model="meetingFormInline" class="demo-form-inline">
@@ -423,7 +427,7 @@
         </el-dialog>
 
         <!-- 人员管理 -->
-        <el-col v-if="index == 4">
+        <el-col v-if="index == 3">
             <!-- 按条件查询 -->
             <div class="el-col-temp">
                 <!-- 按条件查询 -->
@@ -596,6 +600,8 @@
                     <el-button plain type="primary" @click="personHandleUpdate">确 定</el-button>
                 </span>
         </el-dialog>
+
+        <el-col v-if="index == 4"></el-col>
     </el-row>
 </div>
 <!-- 引入 JQuery -->

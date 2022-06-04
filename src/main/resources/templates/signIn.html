@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>签到</title>
+    <link rel="icon" type="image/png" href="image/favicon.png">
+    <!-- 引入 Element 样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+
+</head>
+<body>
+
+<div id="app">
+    <el-row type="flex" justify="center">
+        <el-col style="width: auto">
+            <!--canvas截取流-->
+            <canvas ref="canvas" width="640" height="480" style="display: none"></canvas>
+            <!--图片展示-->
+            <video ref="video" width="640" height="480" autoplay></video>
+        </el-col>
+    </el-row>
+    <el-row type="flex" justify="center">
+        <el-col style="width: auto">
+            <!--开启摄像头-->
+<!--            <el-button type="primary" @click="callCamera" style="margin-right: 10px;">开启摄像头</el-button>-->
+            <!--关闭摄像头-->
+<!--            <el-button type="primary" @click="closeCamera">关闭摄像头</el-button>-->
+            <!--确认-->
+            <el-button plain type="success" @click="photograph">点 击 签 到</el-button>
+        </el-col>
+    </el-row>
+
+</div>
+
+<!-- 引入 JQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"
+        integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
+<!-- 引入 Axios -->
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<!-- 引入 Vue -->
+<script src="https://unpkg.com/vue@2.6.14/dist/vue.js"></script>
+<!-- 引入 Element 组件库 -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="js/signIn.js"></script>
+
+</body>
+</html>

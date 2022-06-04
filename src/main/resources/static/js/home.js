@@ -148,15 +148,19 @@ $(function () {
             setIndex(val) {
                 this.index = val;
             },
+            // 导航 - 会议列表
+            meetingManagement() {
+                this.setIndex(2);
+                this.meetingTable();
+            },
             // 导航 - 人员列表
-            persons() {
-                this.setIndex(4);
+            personsManagement() {
+                this.setIndex(3);
                 this.getAll();
             },
-            // 导航 - 会议列表
-            meetingManagerList() {
-                this.index = 3;
-                this.meetingTable();
+            // 导航 - 签到管理
+            signInManagement() {
+                this.setIndex(4);
             },
 
             // 会议申请表单
@@ -174,7 +178,7 @@ $(function () {
                                 this.$message.error(res.data.msg);
                             }
                         }).finally(() => {
-                            this.meetingManagerList();
+                            this.meetingTable();
                         })
                     } else {
                         this.$message.error('请校验表单后再提交 =_*');
