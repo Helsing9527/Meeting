@@ -45,10 +45,6 @@
                     <i class="el-icon-user"></i>
                     <span slot="title">人员管理</span>
                 </el-menu-item>
-                <el-menu-item index="4" @click="signInManagement">
-                    <i class="el-icon-pie-chart"></i>
-                    <span slot="title">签到管理</span>
-                </el-menu-item>
                 <el-menu-item index="5" @click="setIndex(8)">
                     <i class="el-icon-setting"></i>
                     <span slot="title">设置</span>
@@ -112,9 +108,9 @@
                         </template>
                     </el-table-column>
                     <el-table-column align="center"
-                                     label="参会人员">
+                                     label="参会人员/签到统计">
                         <template slot-scope="scope">
-                            <el-button type="text" @click="meetingParticipant(scope.row)">参会人员</el-button>
+                            <el-button type="text" @click="meetingParticipant(scope.row)">参会人员/签到统计</el-button>
                         </template>
                     </el-table-column>
                     <el-table-column align="center"
@@ -286,7 +282,7 @@
                 </span>
         </el-dialog>
 
-        <!-- 参会人员 -->
+        <!-- 参会人员/签到统计 -->
         <el-dialog
                 title="参会人员"
                 :visible.sync="meetingParticipateDialogVisible"
@@ -317,7 +313,23 @@
                             align="center"
                             label="性别">
                     </el-table-column>
+                    <el-table-column
+                            prop="status"
+                            align="center"
+                            label="签到状态">
+                    </el-table-column>
                 </el-table>
+                <el-form :inline="true" :model="signInCount" class="demo-form-inline" :disabled="true">
+                    <el-form-item label="总人数">
+                        <el-input v-model="signInCount.total"></el-input>
+                    </el-form-item>
+                    <el-form-item label="已签到">
+                        <el-input v-model="signInCount.isSignIn"></el-input>
+                    </el-form-item>
+                    <el-form-item label="未签到">
+                        <el-input v-model="signInCount.noSignIn"></el-input>
+                    </el-form-item>
+                </el-form>
             </template>
             <span slot="footer" class="dialog-footer">
                     <el-button plain type="primary" @click="meetingParticipateDialogVisible = false">确 定</el-button>
@@ -601,7 +613,6 @@
                 </span>
         </el-dialog>
 
-        <el-col v-if="index == 4"></el-col>
     </el-row>
 </div>
 <!-- 引入 JQuery -->

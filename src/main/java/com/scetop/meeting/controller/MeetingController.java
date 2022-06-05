@@ -8,10 +8,6 @@ import com.scetop.meeting.pojo.*;
 import com.scetop.meeting.server.IMeetingServer;
 import com.scetop.meeting.server.IParticipateServer;
 import com.scetop.meeting.server.IUserServer;
-import com.scetop.meeting.tencentapi.group.CreateGroup;
-import com.scetop.meeting.tencentapi.group.DeleteGroup;
-import com.scetop.meeting.tencentapi.group.GetGroupList;
-import com.scetop.meeting.tencentapi.person.CreatePerson;
 import com.scetop.meeting.tencentapi.person.DeletePerson;
 import com.scetop.meeting.tencentapi.person.ModifyPersonBaseInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +29,9 @@ public class MeetingController {
 
     @Autowired
     private DeletePerson deletePerson;
+
+    @Autowired
+    private IParticipateServer participateServer;
 
     // 会议申请 人员列表 分页
     @GetMapping("/{currentPage}/{pageSize}")
@@ -74,15 +73,38 @@ public class MeetingController {
         return new R(false, null, "数据同步失败，自动刷新");
     }
 
-    // 会议列表 根据id查询所有参会人员姓名
+    // 会议列表 参会人员/签到状态
     @GetMapping("/{id}")
     public R queryIds(@PathVariable Integer id) {
+        // 获取所有参会人员 id
         List<Integer> participate = meetingServer.getParticipate(id);
         if (participate.isEmpty()) {
             return new R(false, null, null);
         }
-        List list = userServer.listByIds(participate);
+        // 通过参会人员id 查询个人信息
+        List<User> list = userServer.listByIds(participate);
+        // 遍历添加签到状态
+        for (User user : list) {
+            LambdaQueryWrapper<Participate> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+            lambdaQueryWrapper.eq(Participate::getUser_id, user.getId()).eq(Participate::getApply_id, id);
+            Participate one = participateServer.getOne(lambdaQueryWrapper);
+            user.setStatus(one.getStatus());
+        }
         return new R(true, list, null);
+    }
+
+    @GetMapping("/count/{id}")
+    public R queryStatusCount(@PathVariable Integer id) {
+        LambdaQueryWrapper<Participate> isSignIn = new LambdaQueryWrapper<>();
+        LambdaQueryWrapper<Participate> noSignIn = new LambdaQueryWrapper<>();
+        isSignIn.eq(Participate::getApply_id, id).eq(Participate::getStatus, "已签到");
+        noSignIn.eq(Participate::getApply_id, id).eq(Participate::getStatus, "未签到");
+        long isSignInCount = participateServer.count(isSignIn);
+        long noSignInCount = participateServer.count(noSignIn);
+        SignInCount signInCount = new SignInCount();
+        signInCount.setIsSignIn(isSignInCount);
+        signInCount.setNoSignIn(noSignInCount);
+        return new R(true, signInCount, null);
     }
 
     // 会议列表 编辑 更新

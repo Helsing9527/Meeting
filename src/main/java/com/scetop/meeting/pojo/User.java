@@ -15,8 +15,9 @@ public class User {
     private String post;
     private Long gender;
     private String faceId;
-    private Integer status;
     private String adminCode;
     @TableField(exist = false)
     private String base64;
+    @TableField(exist = false)
+    private String status;
 }

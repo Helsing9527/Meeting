@@ -71,8 +71,14 @@ $(function () {
                     meetingPlace: '',
                     status: ''
                 },
-                //参会人员列表
+                // 参会人员列表
                 meetingDetailsList: [],
+                // 签到统计
+                signInCount: {
+                    total: '',
+                    isSignIn: '',
+                    noSignIn: ''
+                },
                 // 会议详情 弹窗
                 meetingParticipateDialogVisible: false,
                 // 会议列表 会议编辑
@@ -158,10 +164,6 @@ $(function () {
                 this.setIndex(3);
                 this.getAll();
             },
-            // 导航 - 签到管理
-            signInManagement() {
-                this.setIndex(4);
-            },
 
             // 会议申请表单
             submitForm(formName) {
@@ -239,7 +241,7 @@ $(function () {
                 })
                 this.ruleForm = row;
             },
-            // 参会人员
+            // 参会人员/签到统计
             meetingParticipant(row) {
                 this.meetingParticipateDialogVisible = true;
                 axios.get("/meeting/" + row.id).then((res) => {
@@ -252,6 +254,11 @@ $(function () {
                         }
                     }
                     this.meetingDetailsList = res.data.data;
+                });
+                axios.get("/meeting/count/" + row.id).then((res) => {
+                    this.signInCount.isSignIn = res.data.data.isSignIn;
+                    this.signInCount.noSignIn = res.data.data.noSignIn;
+                    this.signInCount.total = this.signInCount.isSignIn + this.signInCount.noSignIn;
                 })
             },
             // 开始会议
@@ -282,7 +289,7 @@ $(function () {
                         }
                         this.ruleForm.persons = this.multipleSelection;
                     }
-                }).finally(()=>{
+                }).finally(() => {
                     this.multipleSelection = [];
                 })
             },

@@ -1,6 +1,6 @@
 .el-menu-vertical-demo:not(.el-menu--collapse) {
     width: 200px;
-    min-height: 400px;
+    height: 100vh;
 }
 
 .el-row {
@@ -11,4 +11,8 @@
     margin-left: 20px;
     border-bottom: aquamarine 3px solid;
     float: none;
+}
+
+.el-pagination {
+    margin: 20px auto auto 20px;
 }
