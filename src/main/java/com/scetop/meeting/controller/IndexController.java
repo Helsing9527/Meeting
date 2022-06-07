@@ -3,7 +3,7 @@ package com.scetop.meeting.controller;
 import com.scetop.meeting.tencentapi.person.CreatePerson;
 import com.scetop.meeting.tencentapi.person.GetPersonList;
 import com.scetop.meeting.tencentapi.face.VerifyFace;
-import com.scetop.meeting.controller.util.R;
+import com.scetop.meeting.util.R;
 import com.scetop.meeting.pojo.Base64;
 import com.scetop.meeting.pojo.User;
 import com.scetop.meeting.server.IUserServer;
@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @RestController
@@ -65,8 +63,7 @@ public class IndexController {
 
     // 人脸识别登录
     @PostMapping("/login")
-    public R loginUser(@RequestBody Base64 imgBase64, HttpServletRequest request) {
-        HttpSession session = request.getSession();
+    public R loginUser(@RequestBody Base64 imgBase64) {
         // 校验图片大小大于10k，小于10k返回登录失败
         if (imgBase64.getImgBase64().length() / 1024 >= 10) {
             int userId = 0;
@@ -84,7 +81,6 @@ public class IndexController {
             // 人员库内匹配登录人员，登录成功
             if (userId != 0) {
                 User user = userServer.getById(userId);
-                session.setAttribute("user", user);
                 return new R(true, user, "登录成功，即将跳转 ^_^");
             }
             return new R(false, null, "未注册，请注册后再登录 -_-||");

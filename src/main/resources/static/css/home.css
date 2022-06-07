@@ -1,10 +1,25 @@
 .el-menu-vertical-demo:not(.el-menu--collapse) {
-    width: 200px;
     height: 100vh;
 }
 
-.el-row {
-    margin-top: 20px;
+h3 {
+    font-family: "Hiragino Sans GB";
+    margin-left: 20px;
+    border-bottom: aquamarine 3px solid;
+}
+
+.demo-table-expand {
+    font-size: 0;
+    margin-left: 20px;
+}
+.demo-table-expand label {
+    width: 90px;
+    color: #99a9bf;
+}
+.demo-table-expand .el-form-item {
+    margin-right: 0;
+    margin-bottom: 0;
+    width: 50%;
 }
 
 .el-col-temp {

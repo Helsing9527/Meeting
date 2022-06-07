@@ -5,12 +5,15 @@ $(function () {
             return {
                 // 默认显示欢迎页
                 index: '1',
-                // 欢迎页日历
-                value: new Date(),
                 // 用户头像
                 url: 'https://cn.vuejs.org/images/logo.svg',
                 // Loading 加载
                 loading: true,
+
+                // 我发起的会议
+                myInitMeeting: [],
+                // 我的会议
+                myMeeting: [],
 
                 // 创建会议弹窗
                 creatMeetingDialogVisible: false,
@@ -154,6 +157,12 @@ $(function () {
             setIndex(val) {
                 this.index = val;
             },
+            // 导航 - 欢迎页
+            home() {
+                this.setIndex(1);
+                this.queryMyInitMeeting();
+                this.queryMyMeeting();
+            },
             // 导航 - 会议列表
             meetingManagement() {
                 this.setIndex(2);
@@ -163,6 +172,25 @@ $(function () {
             personsManagement() {
                 this.setIndex(3);
                 this.getAll();
+            },
+
+            // 查询个人发起的会议
+            queryMyInitMeeting() {
+                axios.get("/meeting/myInitMeeting/" + $("#userId").text()).then((res) => {
+                    this.myInitMeeting = res.data.data;
+                })
+            },
+            // 查询个人参与的会议
+            queryMyMeeting() {
+                axios.get("/meeting/myMeeting/" + $("#userId").text()).then((res) => {
+                    var data = res.data.data;
+                    for (let datum of data) {
+                        axios.get("/meeting/person/" + datum.initiator).then((res) => {
+                            datum.initiator = res.data.data.name;
+                        })
+                    }
+                    this.myMeeting = res.data.data;
+                })
             },
 
             // 会议申请表单
@@ -272,6 +300,7 @@ $(function () {
                         }
                     }).finally(() => {
                         this.meetingTable();
+                        this.queryMyInitMeeting();
                     })
                 } else {
                     this.$message.error('无权开始会议')
@@ -501,6 +530,10 @@ $(function () {
                 })
                 this.$refs['video'].srcObject = null;
             }
+        },
+        mounted() {
+            this.queryMyInitMeeting();
+            this.queryMyMeeting();
         }
     });
 })

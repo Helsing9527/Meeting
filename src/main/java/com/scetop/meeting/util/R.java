@@ -1,4 +1,4 @@
-package com.scetop.meeting.controller.util;
+package com.scetop.meeting.util;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

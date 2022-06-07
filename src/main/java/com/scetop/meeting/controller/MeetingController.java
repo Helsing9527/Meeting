@@ -3,16 +3,18 @@ package com.scetop.meeting.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.scetop.meeting.controller.util.R;
+import com.scetop.meeting.util.R;
 import com.scetop.meeting.pojo.*;
 import com.scetop.meeting.server.IMeetingServer;
 import com.scetop.meeting.server.IParticipateServer;
 import com.scetop.meeting.server.IUserServer;
 import com.scetop.meeting.tencentapi.person.DeletePerson;
 import com.scetop.meeting.tencentapi.person.ModifyPersonBaseInfo;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -32,6 +34,29 @@ public class MeetingController {
 
     @Autowired
     private IParticipateServer participateServer;
+
+    // 查询个人发起的会议
+    @GetMapping("/myInitMeeting/{id}")
+    public R queryMyInitMeeting(@PathVariable String id) {
+        LambdaQueryWrapper<Apply> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(Apply::getInitiator, id);
+        List<Apply> applyList = meetingServer.list(lambdaQueryWrapper);
+        return new R(true, applyList, null);
+    }
+
+    // 查询个人拥有的会议
+    @GetMapping("/myMeeting/{id}")
+    public R queryMyMeeting(@PathVariable String id) {
+        List<Integer> apply_ids = new ArrayList<>();
+        LambdaQueryWrapper<Participate> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(Strings.isNotEmpty(id), Participate::getUser_id, id);
+        List<Participate> participateList = participateServer.list(lambdaQueryWrapper);
+        for (Participate participate : participateList) {
+            apply_ids.add(participate.getApply_id());
+        }
+        List<Apply> applyList = meetingServer.listByIds(apply_ids);
+        return new R(true, applyList, null);
+    }
 
     // 会议申请 人员列表 分页
     @GetMapping("/{currentPage}/{pageSize}")

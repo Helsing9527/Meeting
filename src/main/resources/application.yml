@@ -18,6 +18,9 @@ spring:
     prefix: classpath:/templates/
     suffix: .html
     cache: false
+  banner:
+    image:
+      location: classpath:/static/image/logo.png
 
 #配置 Mybatis Plus
 mybatis-plus:
@@ -26,7 +29,7 @@ mybatis-plus:
       id-type: auto
   configuration:
     map-underscore-to-camel-case: false
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 #腾讯 SecretId/SecretKey
 SecretId: AKIDYuznLcbJkunPkpc8NL2TcXEfpiLhncBT

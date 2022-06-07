@@ -5,7 +5,7 @@
     <title>主页</title>
     <link rel="icon" type="image/png" href="/image/favicon.png">
     <!-- 引入 Element 样式 -->
-    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="/css/index.css">
     <link rel="stylesheet" href="/css/home.css">
 </head>
 <body>
@@ -33,7 +33,7 @@
                             <p th:text="${userInfo.id}" style="display: none" id="userId"></p></el-col>
                     </el-row>
                 </div>
-                <el-menu-item index="1" @click="setIndex(1)">
+                <el-menu-item index="1" @click="home">
                     <i class="el-icon-menu"></i>
                     <span slot="title">欢迎页</span>
                 </el-menu-item>
@@ -52,12 +52,118 @@
             </el-menu>
         </el-col>
         <!--欢迎页-->
-        <el-calendar v-model="value" v-if="index == 1"></el-calendar>
+        <el-col v-if="index == 1">
+            <!-- 我发起的会议 -->
+            <template>
+                <h3>我发起的会议</h3>
+                <el-table
+                        :data="myInitMeeting"
+                        style="width: 100%">
+                    <el-table-column type="expand">
+                        <template slot-scope="props">
+                            <el-form label-position="left" inline class="demo-table-expand">
+                                <el-form-item label="会议名称">
+                                    <span>{{ props.row.meetingName }}</span>
+                                </el-form-item>
+                                <el-form-item label="会议地点">
+                                    <span>{{ props.row.meetingPlace }}</span>
+                                </el-form-item>
+                                <el-form-item label="开始时间">
+                                    <span>{{ props.row.startTime }}</span>
+                                </el-form-item>
+                                <el-form-item label="结束时间">
+                                    <span>{{ props.row.endTime }}</span>
+                                </el-form-item>
+                                <el-form-item label="会议描述">
+                                    <span>{{ props.row.meetingDesc }}</span>
+                                </el-form-item>
+                                <el-form-item label="会议状态">
+                                    <span>{{ props.row.status }}</span>
+                                </el-form-item>
+                            </el-form>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            label="会议名称"
+                            align="center"
+                            prop="meetingName">
+                    </el-table-column>
+                    <el-table-column
+                            label="会议状态"
+                            align="center"
+                            prop="status">
+                    </el-table-column>
+                    <el-table-column
+                            label="会议操作"
+                            align="center">
+                        <template slot-scope="scope">
+                            <el-button
+                                    plain
+                                    size="mini"
+                                    @click="handleStart(scope.row)">开始会议
+                            </el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </template>
+
+            <!-- 我参与的会议 -->
+            <template>
+                <h3>我参与的会议</h3>
+                <el-table
+                        :data="myMeeting"
+                        style="width: 100%">
+                    <el-table-column type="expand">
+                        <template slot-scope="props">
+                            <el-form label-position="left" inline class="demo-table-expand">
+                                <el-form-item label="会议名称">
+                                    <span>{{ props.row.meetingName }}</span>
+                                </el-form-item>
+                                <el-form-item label="会议地点">
+                                    <span>{{ props.row.meetingPlace }}</span>
+                                </el-form-item>
+                                <el-form-item label="开始时间">
+                                    <span>{{ props.row.startTime }}</span>
+                                </el-form-item>
+                                <el-form-item label="结束时间">
+                                    <span>{{ props.row.endTime }}</span>
+                                </el-form-item>
+                                <el-form-item label="会议描述">
+                                    <span>{{ props.row.meetingDesc }}</span>
+                                </el-form-item>
+                                <el-form-item label="会议发起人">
+                                    <span>{{ props.row.initiator }}</span>
+                                </el-form-item>
+                                <el-form-item label="会议状态">
+                                    <span>{{ props.row.status }}</span>
+                                </el-form-item>
+                            </el-form>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            label="会议名称"
+                            align="center"
+                            prop="meetingName">
+                    </el-table-column>
+                    <el-table-column
+                            label="会议地点"
+                            align="center"
+                            prop="meetingPlace">
+                    </el-table-column>
+                    <el-table-column
+                            label="开始时间"
+                            align="center"
+                            prop="startTime">
+                    </el-table-column>
+                </el-table>
+            </template>
+
+        </el-col>
         <!--判断是否为管理员，管理员开放管理权限-->
         <!--会议列表-->
         <el-col v-if="index == 2">
+            <!-- 按条件查询 -->
             <div class="el-col-temp">
-                <!-- 按条件查询 -->
                 <el-form :inline="true" :model="meetingFormInline" class="demo-form-inline">
                     <el-form-item label="会议名称">
                         <el-input v-model="meetingFormInline.meetingName" placeholder="会议名称"></el-input>
@@ -87,8 +193,8 @@
                 </el-form>
             </div>
 
+            <!-- 会议列表 -->
             <template>
-                <!-- 会议列表 -->
                 <el-table
                         v-loading="loading"
                         element-loading-text="拼命加载中"
@@ -97,6 +203,7 @@
                         :data="meetingList"
                         style="width: 100%"
                         stripe>
+                    <el-table-column></el-table-column>
                     <el-table-column align="center"
                                      prop="meetingName"
                                      label="会议名称">
@@ -475,6 +582,7 @@
                         stripe
                         :row-key="(row) => {return row.id}"
                         @selection-change="handleSelectionChange">
+                    <el-table-column></el-table-column>
                     <el-table-column prop="name" label="姓名" align="center"></el-table-column>
                     <el-table-column prop="dept" label="部门" align="center"></el-table-column>
                     <el-table-column prop="post" label="职位" align="center"></el-table-column>
@@ -514,8 +622,8 @@
 
         <!-- 员工入职 -->
         <el-dialog
-        title="注册员工个人信息"
-        :visible.sync="registerDialogVisible"
+                title="注册员工个人信息"
+                :visible.sync="registerDialogVisible"
                 center>
             <el-form :model="personForm" :rules="personFormRules" ref="personForm" label-width="100px"
                      class="demo-ruleForm">
@@ -616,14 +724,13 @@
     </el-row>
 </div>
 <!-- 引入 JQuery -->
-<script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"
-        integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
+<script src="/js/jquery-3.6.0.slim.min.js"></script>
 <!-- 引入 Axios -->
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="/js/axios.min.js"></script>
 <!-- 引入 Vue -->
-<script src="https://unpkg.com/vue@2.6.14/dist/vue.js"></script>
+<script src="/js/vue.js"></script>
 <!-- 引入 Element 组件库 -->
-<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="/js/index.js"></script>
 <script src="/js/home.js"></script>
 
 </body>
