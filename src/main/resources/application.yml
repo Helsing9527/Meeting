@@ -1,0 +1,30 @@
+server:
+  port: 9527
+
+spring:
+  datasource:
+    druid:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://${MYSQL_HOST:81.68.131.135}:3306/meeting?setTimezone=Asia/Shanghai
+      username: root
+      password: meeting
+
+  thymeleaf:
+    cache: false
+    mode: HTML
+    encoding: UTF-8
+    servlet:
+      content-type: text/html
+    prefix: classpath:/templates/
+    suffix: .html
+
+mybatis-plus:
+  global-config:
+    db-config:
+      id-type: auto
+  configuration:
+    map-underscore-to-camel-case: true
+
+compreFace:
+  compreFaceUrl: http://${SERVER_HOST:81.68.131.135}
+  x-api-key: ${API_KEY:725846a1-648a-46d7-b14f-390766259c83}

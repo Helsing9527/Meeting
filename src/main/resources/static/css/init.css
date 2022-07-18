@@ -1,0 +1,31 @@
+body {
+    background: url("http://api.btstu.cn/sjbz/?lx=dongman");
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+}
+
+.main {
+    display: flex;
+    justify-content: center;
+    margin-top: 100px;
+}
+
+.el-form {
+    width: 30vw;
+    border: aliceblue 2px solid;
+    border-radius: 50px;
+    background-color: rgba(240, 255, 255, 0.7);
+    padding: 50px;
+}
+
+.el-select {
+    width: 100%;
+}
+
+.submit {
+    display: flex;
+    justify-content: center;
+}

@@ -1,0 +1,64 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+/*导航边栏*/
+.el-aside {
+    color: #333;
+}
+
+.demo-image {
+    margin: 30px 0 20px;
+}
+
+/*我的会议表头*/
+h3 {
+    font-family: "Hiragino Sans GB";
+    margin: 30px 0 20px;
+    padding-bottom: 5px;
+    border-bottom: aquamarine 3px solid;
+}
+
+/*操作区*/
+.el-row-operation {
+    padding-bottom: 5px;
+    border-bottom: aquamarine 3px solid;
+}
+
+/*日期选择框*/
+.el-date-editor.el-input {
+    width: 100%;
+}
+
+/*分页条*/
+.el-pagination {
+    margin-top: 20px;
+}
+
+/*下拉选择框*/
+.el-select {
+    width: 100%;
+}
+
+/*会议管理表格样式*/
+.demo-table-expand {
+    font-size: 0;
+}
+.demo-table-expand label {
+    width: 90px;
+    color: #99a9bf;
+}
+.demo-table-expand .el-form-item {
+    margin-right: 0;
+    margin-bottom: 0;
+    width: 50%;
+}
+
+/*签到统计*/
+#checkInCount {
+    font-size: 24px;
+    margin-bottom: 20px;
+    border-bottom: aquamarine 3px solid;
+}
+

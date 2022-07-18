@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>个人中心</title>
+    <link rel="icon" type="image/png" href="https://cn.vuejs.org/images/icons/apple-icon-114x114.png">
+    <!-- 引入 Element 样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- 引入登录页 css -->
+    <link rel="stylesheet" href="/css/workstation.css">
+</head>
+<body>
+
+<div id="app">
+    <el-container>
+        <!-- 导航区 -->
+        <el-aside width="200px">
+            <el-menu default-active="1" class="el-menu-vertical-demo" style="height: 100vh">
+                <!--登录成功回显用户信息-->
+                <div class="demo-image">
+                    <el-row type="flex" justify="center">
+                        <el-col :span="12">
+                            <el-image
+                                    style="width: 100px; height: 100px"
+                                    :src="url"
+                            ></el-image>
+                        </el-col>
+                    </el-row>
+                    <el-row type="flex" justify="center">
+                        <el-col :span="6">
+                            {{staffInfo.userName}}
+                        </el-col>
+                    </el-row>
+                </div>
+                <el-menu-item index="1" @click="myMeeting">
+                    <i class="el-icon-menu"></i>
+                    <span slot="title">我的会议</span>
+                </el-menu-item>
+                <el-menu-item index="2" @click="meetingManagement" v-if="staffInfo.admin == 'true'">
+                    <i class="el-icon-chat-dot-square"></i>
+                    <span slot="title">会议管理</span>
+                </el-menu-item>
+                <el-menu-item index="3" @click="staffManagement" v-if="staffInfo.admin == 'true'">
+                    <i class="el-icon-user"></i>
+                    <span slot="title">人员管理</span>
+                </el-menu-item>
+                <el-menu-item index="4" @click="exit">
+                    <i class="el-icon-switch-button"></i>
+                    <span slot="title">安全退出</span>
+                </el-menu-item>
+            </el-menu>
+        </el-aside>
+
+        <!-- 功能区 -->
+        <el-container>
+            <el-main>
+                <!-- 我的会议 -->
+                <template v-if="index == 1">
+                    <template v-if="staffInfo.admin == 'true'">
+                        <h3>我发起的会议</h3>
+
+                        <!-- 我发起的会议列表 -->
+                        <el-table
+                                :data="myCreatedMeeting"
+                                highlight-current-row
+                                style="width: 100%">
+                            <el-table-column
+                                    fixed
+                                    prop="meetingName"
+                                    label="会议名称"
+                                    align="center">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="meetingRoom"
+                                    label="会议室"
+                                    align="center">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="startingTime"
+                                    label="开始时间"
+                                    align="center">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="endTime"
+                                    label="结束时间"
+                                    align="center">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="meetingDesc"
+                                    label="会议概述"
+                                    align="center">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="status"
+                                    label="会议状态"
+                                    align="center">
+                            </el-table-column>
+                            <el-table-column
+                                    fixed="right"
+                                    label="操作"
+                                    width="100"
+                                    align="center">
+                                <template slot-scope="scope">
+                                    <el-button
+                                            type="text"
+                                            size="mini"
+                                            @click="startMyMeeting(scope.row)">开始会议
+                                    </el-button>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                    </template>
+
+                    <!-- 开始会议弹窗 -->
+                    <el-dialog
+                            title="提示"
+                            :visible.sync="startMyMeetingDialogVisible"
+                            width="30%">
+                        <span>确定开始会议？</span>
+                        <span slot="footer" class="dialog-footer">
+                                    <el-button plain round @click="startMyMeetingDialogVisible = false">取 消</el-button>
+                                    <el-button type="primary" plain round @click="confirmStartMyMeeting">确 定</el-button>
+                                </span>
+                    </el-dialog>
+
+                    <h3>我参与的会议</h3>
+
+                    <!-- 我参与的会议列表 -->
+                    <el-table
+                            :data="myParticipantsMeeting"
+                            highlight-current-row
+                            style="width: 100%">
+                        <el-table-column
+                                fixed
+                                prop="meetingName"
+                                label="会议名称"
+                                align="center">
+                        </el-table-column>
+                        <el-table-column
+                                prop="meetingRoom"
+                                label="会议室"
+                                align="center">
+                        </el-table-column>
+                        <el-table-column
+                                prop="startingTime"
+                                label="开始时间"
+                                align="center">
+                        </el-table-column>
+                        <el-table-column
+                                prop="endTime"
+                                label="结束时间"
+                                align="center">
+                        </el-table-column>
+                        <el-table-column
+                                prop="sponsor"
+                                label="发起人"
+                                align="center">
+                        </el-table-column>
+                        <el-table-column
+                                prop="meetingDesc"
+                                label="会议概述"
+                                align="center">
+                        </el-table-column>
+                        <el-table-column
+                                prop="status"
+                                label="会议状态"
+                                align="center">
+                        </el-table-column>
+                        <el-table-column
+                                fixed="right"
+                                prop="checkInStatus"
+                                label="签到状态"
+                                align="center">
+                        </el-table-column>
+                    </el-table>
+
+                </template>
+
+                <!-- 会议管理 -->
+                <template v-if="index == 2">
+                    <!-- Header -->
+                    <el-row class="el-row-operation">
+                        <!-- 操作区 -->
+                        <el-col :span="10">
+                            <!-- 创建会议 -->
+                            <el-button type="success" plain round @click="createMeeting">创建会议
+                            </el-button>
+
+                            <!-- 创建会议弹窗 -->
+                            <el-dialog
+                                    title="创建会议"
+                                    :visible.sync="createMeetingDialogVisible"
+                                    width="30%"
+                                    center>
+
+                                <el-form :model="createMeetingForm" :rules="rulesCreateMeeting" ref="createMeetingForm"
+                                         label-width="100px" class="demo-ruleForm">
+                                    <el-form-item label="会议名称" prop="meetingName" :label-width="formLabelWidth">
+                                        <el-input v-model="createMeetingForm.meetingName"
+                                                  placeholder="请输入会议名称"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="会议室" prop="meetingRoom" :label-width="formLabelWidth">
+                                        <el-select v-model="createMeetingForm.meetingRoom" placeholder="请选择会议室">
+                                            <el-option label="会议室(一)" value="会议室(一)"></el-option>
+                                            <el-option label="会议室(二)" value="会议室(二)"></el-option>
+                                            <el-option label="会议室(三)" value="会议室(三)"></el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                    <el-form-item label="开始时间" prop="startingTime" :label-width="formLabelWidth">
+                                        <el-date-picker
+                                                v-model="createMeetingForm.startingTime"
+                                                type="datetime"
+                                                value-format="yyyy-MM-dd HH:mm:ss"
+                                                placeholder="选择开始时间">
+                                        </el-date-picker>
+                                    </el-form-item>
+                                    <el-form-item label="结束时间" prop="endTime" :label-width="formLabelWidth">
+                                        <el-date-picker
+                                                v-model="createMeetingForm.endTime"
+                                                type="datetime"
+                                                value-format="yyyy-MM-dd HH:mm:ss"
+                                                placeholder="选择结束时间">
+                                        </el-date-picker>
+                                    </el-form-item>
+                                    <el-form-item label="会议内容" prop="meetingDesc" :label-width="formLabelWidth">
+                                        <el-input type="textarea" v-model="createMeetingForm.meetingDesc"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="参会人员" prop="participants" :label-width="formLabelWidth">
+                                        <el-button plain round @click="selectStaff">选择参会人员</el-button>
+                                    </el-form-item>
+
+                                    <!-- 选择参会人员 -->
+                                    <el-dialog
+                                            title="选择参会人员"
+                                            :visible.sync="selectStaffDialogVisible"
+                                            width="70%"
+                                            center
+                                            append-to-body>
+                                        <template>
+                                            <!-- 人员列表 -->
+                                            <el-table
+                                                    :data="staffTable"
+                                                    style="width: 100%"
+                                                    stripe
+                                                    :row-key="(row) => {return row.id}"
+                                                    @selection-change="handleSelectionChange">
+                                                <el-table-column type="selection" width="55"
+                                                                 :reserve-selection="true"
+                                                                 align="center"></el-table-column>
+                                                <el-table-column prop="userName" label="姓名"
+                                                                 align="center"></el-table-column>
+                                                <el-table-column prop="dept" label="部门"
+                                                                 align="center"></el-table-column>
+                                                <el-table-column prop="post" label="职位"
+                                                                 align="center"></el-table-column>
+                                                <el-table-column prop="gender" label="性别"
+                                                                 align="center"></el-table-column>
+                                            </el-table>
+                                            <!-- 分页工具 -->
+                                            <el-row type="flex" justify="start">
+                                                <el-col :span="14">
+                                                    <el-pagination
+                                                            @size-change="staffTableSizeChange"
+                                                            @current-change="staffTableCurrentChange"
+                                                            :current-page="pagination.currentPage"
+                                                            :page-sizes="[10, 15, 20]"
+                                                            :page-size="pagination.pageSize"
+                                                            background
+                                                            layout="total, sizes, prev, pager, next, jumper"
+                                                            :total="pagination.total">
+                                                    </el-pagination>
+                                                </el-col>
+                                            </el-row>
+                                        </template>
+
+                                        <span slot="footer" class="dialog-footer">
+                                            <el-button type="primary" plain round @click="confirmSelectStaff">确 定</el-button>
+                                        </span>
+                                    </el-dialog>
+
+                                    <el-form-item align="center">
+                                        <el-button type="primary" plain round
+                                                   @click="submitCreateMeetingForm('createMeetingForm')">创 建
+                                        </el-button>
+                                        <el-button plain round @click="resetForm('createMeetingForm')">重 置</el-button>
+                                    </el-form-item>
+                                </el-form>
+
+                            </el-dialog>
+
+                            <!-- 编辑会议 -->
+                            <el-button plain round @click="editMeeting">编辑会议</el-button>
+
+                            <!-- 编辑会议弹窗 -->
+                            <el-dialog
+                                    title="编辑会议"
+                                    :visible.sync="editMeetingDialogVisible"
+                                    width="30%"
+                                    center>
+
+                                <el-form :model="createMeetingForm" :rules="rulesCreateMeeting" ref="createMeetingForm"
+                                         label-width="100px" class="demo-ruleForm">
+                                    <el-form-item label="会议名称" prop="meetingName" :label-width="formLabelWidth">
+                                        <el-input v-model="createMeetingForm.meetingName"
+                                                  placeholder="请输入会议名称"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="部门" prop="meetingRoom" :label-width="formLabelWidth">
+                                        <el-select v-model="createMeetingForm.meetingRoom" placeholder="请选择会议室">
+                                            <el-option label="会议室(一)" value="会议室(一)"></el-option>
+                                            <el-option label="会议室(二)" value="会议室(二)"></el-option>
+                                            <el-option label="会议室(三)" value="会议室(三)"></el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                    <el-form-item label="开始时间" prop="startingTime" :label-width="formLabelWidth">
+                                        <el-date-picker
+                                                v-model="createMeetingForm.startingTime"
+                                                type="datetime"
+                                                value-format="yyyy-MM-dd HH:mm:ss"
+                                                placeholder="选择开始时间">
+                                        </el-date-picker>
+                                    </el-form-item>
+                                    <el-form-item label="结束时间" prop="endTime" :label-width="formLabelWidth">
+                                        <el-date-picker
+                                                v-model="createMeetingForm.endTime"
+                                                type="datetime"
+                                                value-format="yyyy-MM-dd HH:mm:ss"
+                                                placeholder="选择结束时间">
+                                        </el-date-picker>
+                                    </el-form-item>
+                                    <el-form-item label="会议内容" prop="meetingDesc" :label-width="formLabelWidth">
+                                        <el-input type="textarea" v-model="createMeetingForm.meetingDesc"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="参会人员" prop="participants" :label-width="formLabelWidth">
+                                        <el-button plain round @click="selectStaff">选择参会人员</el-button>
+                                    </el-form-item>
+
+                                    <!-- 选择参会人员 -->
+                                    <el-dialog
+                                            title="选择参会人员"
+                                            :visible.sync="selectStaffDialogVisible"
+                                            width="70%"
+                                            center
+                                            append-to-body>
+                                        <template>
+                                            <!-- 人员列表 -->
+                                            <el-table
+                                                    :data="staffTable"
+                                                    style="width: 100%"
+                                                    stripe
+                                                    :row-key="(row) => {return row.id}"
+                                                    @selection-change="handleSelectionChange">
+                                                <el-table-column type="selection" width="55"
+                                                                 :reserve-selection="true"></el-table-column>
+                                                <el-table-column prop="userName" label="姓名"></el-table-column>
+                                                <el-table-column prop="dept" label="部门"></el-table-column>
+                                                <el-table-column prop="post" label="职位"></el-table-column>
+                                                <el-table-column prop="gender" label="性别"></el-table-column>
+                                            </el-table>
+                                            <!-- 分页工具 -->
+                                            <el-row type="flex" justify="start">
+                                                <el-col :span="14">
+                                                    <el-pagination
+                                                            @size-change="staffTableSizeChange"
+                                                            @current-change="staffTableCurrentChange"
+                                                            :current-page="pagination.currentPage"
+                                                            :page-sizes="[10, 15, 20]"
+                                                            :page-size="pagination.pageSize"
+                                                            background
+                                                            layout="total, sizes, prev, pager, next, jumper"
+                                                            :total="pagination.total">
+                                                    </el-pagination>
+                                                </el-col>
+                                            </el-row>
+                                        </template>
+
+                                        <span slot="footer" class="dialog-footer">
+                                            <el-button type="primary" plain round @click="confirmSelectStaff">确 定</el-button>
+                                        </span>
+                                    </el-dialog>
+
+                                    <el-form-item align="center">
+                                        <el-button type="primary" plain round
+                                                   @click="submitEditMeetingForm('createMeetingForm')">修改
+                                        </el-button>
+                                        <el-button plain round @click="resetForm('createMeetingForm')">重 置</el-button>
+                                    </el-form-item>
+                                </el-form>
+
+                            </el-dialog>
+
+                            <!-- 开始会议 -->
+                            <el-button type="primary" plain round @click="startMeeting">开始会议</el-button>
+
+                            <!-- 开始会议弹窗 -->
+                            <el-dialog
+                                    title="提示"
+                                    :visible.sync="startMeetingDialogVisible"
+                                    width="30%">
+                                <span>确定开始会议？</span>
+                                <span slot="footer" class="dialog-footer">
+                                    <el-button plain round @click="startMeetingDialogVisible = false">取 消</el-button>
+                                    <el-button type="primary"  plain round @click="confirmStartMeeting">确 定</el-button>
+                                </span>
+                            </el-dialog>
+
+                            <!-- 会议签到 -->
+                            <el-button type="info" plain round @click="helpCheckIn">会议代签</el-button>
+
+                            <!-- 会议代签弹窗 -->
+                            <el-dialog
+                                    title="参会人员"
+                                    :visible.sync="helpCheckInDialogVisible"
+                                    width="70%"
+                                    center>
+
+                                <el-table
+                                        :data="helpCheckInTableDate"
+                                        max-height="600"
+                                        style="width: 100%">
+                                    <el-table-column
+                                            fixed
+                                            prop="userName"
+                                            label="姓名"
+                                            align="center">
+                                    </el-table-column>
+                                    <el-table-column
+                                            prop="dept"
+                                            label="部门"
+                                            align="center">
+                                    </el-table-column>
+                                    <el-table-column
+                                            prop="post"
+                                            label="职位"
+                                            align="center">
+                                    </el-table-column>
+                                    <el-table-column
+                                            prop="gender"
+                                            label="性别"
+                                            align="center">
+                                    </el-table-column>
+                                    <el-table-column
+                                            prop="status"
+                                            label="签到状态"
+                                            align="center">
+                                    </el-table-column>
+                                    <el-table-column
+                                            fixed="right"
+                                            label="操作"
+                                            align="center">
+                                        <template slot-scope="scope">
+                                            <el-button @click="confirmHelpCheckIn(scope.row)" type="text" size="small">
+                                                点击代签
+                                            </el-button>
+                                        </template>
+                                    </el-table-column>
+                                </el-table>
+                            </el-dialog>
+
+                            <!-- 删除会议 -->
+                            <el-button type="danger" plain round @click="deleteMeeting">删除会议</el-button>
+
+                            <!-- 删除会议弹窗 -->
+                            <el-dialog
+                                    title="提示"
+                                    :visible.sync="deleteMeetingDialogVisible"
+                                    width="30%">
+                                <span>确定删除该会议？</span>
+                                <span slot="footer" class="dialog-footer">
+                                    <el-button plain round @click="deleteMeetingDialogVisible = false">取 消</el-button>
+                                    <el-button type="primary" plain round @click="confirmDeleteMeeting">确 定</el-button>
+                                </span>
+                            </el-dialog>
+                        </el-col>
+
+                        <!-- 按条件查询 -->
+                        <el-col :span="14">
+                            <el-form :inline="true" :model="meetingCondition" class="demo-form-inline">
+                                <el-form-item label="会议名称">
+                                    <el-input v-model="meetingCondition.meetingName" placeholder="会议名称"></el-input>
+                                </el-form-item>
+                                <el-form-item label="会议室">
+                                    <el-input v-model="meetingCondition.meetingRoom" placeholder="会议室"></el-input>
+                                </el-form-item>
+                                <el-form-item label="发起人">
+                                    <el-input v-model="meetingCondition.sponsor" placeholder="发起人"></el-input>
+                                </el-form-item>
+                                <el-form-item>
+                                    <el-button type="primary" plain round @click="queryMeeting">查询</el-button>
+                                </el-form-item>
+                            </el-form>
+                        </el-col>
+                    </el-row>
+
+                    <!-- 会议列表 -->
+                    <el-table
+                            ref="singleTable"
+                            :data="meetingTable"
+                            highlight-current-row
+                            @current-change="selectOneMeeting">
+                        <el-table-column
+                                fixed
+                                prop="meetingName"
+                                label="会议名称"
+                                align="center">
+                        </el-table-column>
+                        <el-table-column
+                                prop="meetingRoom"
+                                label="会议室"
+                                align="center">
+                        </el-table-column>
+                        <el-table-column
+                                prop="startingTime"
+                                label="开始时间"
+                                align="center">
+                        </el-table-column>
+                        <el-table-column
+                                prop="endTime"
+                                label="结束时间"
+                                align="center">
+                        </el-table-column>
+                        <el-table-column
+                                prop="sponsor"
+                                label="发起人"
+                                align="center">
+                        </el-table-column>
+                        <el-table-column
+                                prop="meetingDesc"
+                                label="会议概述"
+                                align="center">
+                        </el-table-column>
+                        <el-table-column
+                                prop="status"
+                                label="会议状态"
+                                align="center">
+                        </el-table-column>
+                        <el-table-column
+                                fixed="right"
+                                label="参会人员/签到详情"
+                                width="150"
+                                align="center">
+                            <template slot-scope="scope">
+                                <el-button @click="meetingDetails(scope.row)" type="text" size="small">查看</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+
+                    <!-- 参会人员/签到详情 弹窗 -->
+                    <el-dialog
+                            title="参会人员/签到详情"
+                            :visible.sync="checkInDialogVisible"
+                            width="70%"
+                            center>
+                        <!-- 签到统计 -->
+                        <el-row type="flex" justify="center" id="checkInCount">
+                            <el-col :span="4">
+                                <span>总参会人数:</span>&nbsp;&nbsp;{{checkInCount.total}}
+                            </el-col>
+                            <el-col :span="4">
+                                <span>已签到人数:</span>&nbsp;&nbsp;{{checkInCount.checkIn}}
+                            </el-col>
+                            <el-col :span="4">
+                                <span>未签到人数:</span>&nbsp;&nbsp;{{checkInCount.notCheckIn}}
+                            </el-col>
+                        </el-row>
+
+                        <!-- 员工列表 -->
+                        <el-table
+                                :data="staffTable"
+                                highlight-current-row>
+                            <el-table-column
+                                    prop="userName"
+                                    label="姓名"
+                                    align="center">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="dept"
+                                    label="部门"
+                                    align="center">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="post"
+                                    label="职位"
+                                    align="center">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="gender"
+                                    label="性别"
+                                    align="center">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="status"
+                                    label="签到状态"
+                                    align="center">
+                            </el-table-column>
+                        </el-table>
+
+                        <!-- 分页工具条 -->
+                        <el-pagination
+                                @size-change="staffTableSizeChange"
+                                @current-change="staffTableCurrentChange"
+                                :current-page="pagination.currentPage"
+                                :page-sizes="[10, 15, 20]"
+                                :page-size="pagination.pageSize"
+                                layout="total, sizes, prev, pager, next, jumper"
+                                :total="pagination.total">
+                        </el-pagination>
+
+                        <span slot="footer" class="dialog-footer">
+                            <el-button type="primary" plain round @click="checkInDialogVisible = false">确 定</el-button>
+                        </span>
+                    </el-dialog>
+
+                    <!-- 分页工具条 -->
+                    <el-pagination
+                            @size-change="meetingTableSizeChange"
+                            @current-change="meetingTableCurrentChange"
+                            :current-page="pagination.currentPage"
+                            :page-sizes="[10, 15, 20]"
+                            :page-size="pagination.pageSize"
+                            layout="total, sizes, prev, pager, next, jumper"
+                            :total="pagination.total">
+                    </el-pagination>
+                </template>
+
+                <!-- 人员管理 -->
+                <template v-if="index == 3">
+                    <!-- Header -->
+                    <el-row class="el-row-operation">
+                        <!-- 操作区 -->
+                        <el-col :span="8">
+                            <!-- 员工入职 -->
+                            <el-button type="success" plain round @click="staffHiredDialogVisible = true">员工入职
+                            </el-button>
+
+                            <!-- 员工入职弹窗 -->
+                            <el-dialog
+                                    title="员工入职"
+                                    :visible.sync="staffHiredDialogVisible"
+                                    width="30%"
+                                    center>
+
+                                <el-form :model="staffHiredForm" :rules="rulesStaffHired" ref="staffHiredForm"
+                                         label-width="100px" class="demo-ruleForm">
+                                    <el-form-item label="姓名" prop="userName" :label-width="formLabelWidth">
+                                        <el-input v-model="staffHiredForm.userName" placeholder="请输入姓名"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="部门" prop="dept" :label-width="formLabelWidth">
+                                        <el-select v-model="staffHiredForm.dept" placeholder="请选择部门">
+                                            <el-option label="总裁办" value="总裁办"></el-option>
+                                            <el-option label="财务部" value="财务部"></el-option>
+                                            <el-option label="工程部" value="工程部"></el-option>
+                                            <el-option label="商务部" value="商务部"></el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                    <el-form-item label="职位" prop="post" :label-width="formLabelWidth">
+                                        <el-select v-model="staffHiredForm.post" placeholder="请选择职位">
+                                            <el-option label="总裁" value="总裁"></el-option>
+                                            <el-option label="总经理" value="总经理"></el-option>
+                                            <el-option label="经理" value="经理"></el-option>
+                                            <el-option label="员工" value="员工"></el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                    <el-form-item label="性别" prop="gender" :label-width="formLabelWidth">
+                                        <el-radio-group v-model="staffHiredForm.gender">
+                                            <el-radio label="男"></el-radio>
+                                            <el-radio label="女"></el-radio>
+                                        </el-radio-group>
+                                    </el-form-item>
+                                    <el-form-item label="照片" prop="imgBase64" :label-width="formLabelWidth">
+                                        <el-button type="info" plain round @click="photoDialog">拍照录入</el-button>
+
+                                        <!-- 人脸拍照录入 -->
+                                        <el-dialog
+                                                title="拍照"
+                                                :visible.sync="photographDialogVisible"
+                                                @close="closeCamera"
+                                                append-to-body
+                                                center>
+                                            <video ref="video" width="100%" height="480" autoplay></video>
+                                            <canvas ref="canvas" width="640" height="480"
+                                                    style="display: none"></canvas>
+                                            <span slot="footer" class="dialog-footer">
+                                                <el-button @click="photographDialogVisible = false" plain
+                                                           round>取 消</el-button>
+                                                <el-button type="primary" plain round
+                                                           @click="photo">确 定</el-button>
+                                            </span>
+
+                                        </el-dialog>
+                                        <br>或
+                                        <el-upload
+                                                class="upload-demo"
+                                                action="#"
+                                                multiple
+                                                :limit="1"
+                                                :on-exceed="handleExceed"
+                                                :http-request="httpRequest"
+                                                :file-list="fileList">
+                                            <el-button type="primary" plain round>点击上传</el-button>
+                                            <div slot="tip" class="el-upload__tip">只能上传jpg/jpeg/png/webp文件，且不超过5M</div>
+                                        </el-upload>
+                                    </el-form-item>
+                                    <el-form-item label="管理员" prop="admin" :label-width="formLabelWidth">
+                                        <el-switch v-model="staffHiredForm.admin"></el-switch>
+                                    </el-form-item>
+                                    <el-form-item>
+                                        <el-button type="primary" plain round
+                                                   @click="submitStaffHiredForm('staffHiredForm')">立即创建
+                                        </el-button>
+                                        <el-button plain round @click="resetForm('staffHiredForm')">重置</el-button>
+                                    </el-form-item>
+                                </el-form>
+
+                            </el-dialog>
+
+                            <!-- 员工信息修改 -->
+                            <el-button plain round @click="staffEdit">信息修改</el-button>
+
+                            <!-- 员工信息修改弹窗 -->
+                            <el-dialog
+                                    title="修改员工信息"
+                                    :visible.sync="staffEditDialogVisible"
+                                    width="30%"
+                                    center>
+
+                                <el-form :model="staffEditForm" :rules="rulesStaffEdit" ref="staffEditForm"
+                                         label-width="100px" class="demo-ruleForm">
+                                    <el-form-item label="姓名" prop="userName" :label-width="formLabelWidth">
+                                        <el-input v-model="staffEditForm.userName" placeholder="请输入姓名"
+                                                  disabled></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="部门" prop="dept" :label-width="formLabelWidth">
+                                        <el-select v-model="staffEditForm.dept" placeholder="请选择部门">
+                                            <el-option label="总裁办" value="总裁办"></el-option>
+                                            <el-option label="财务部" value="财务部"></el-option>
+                                            <el-option label="工程部" value="工程部"></el-option>
+                                            <el-option label="商务部" value="商务部"></el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                    <el-form-item label="职位" prop="post" :label-width="formLabelWidth">
+                                        <el-select v-model="staffEditForm.post" placeholder="请选择职位">
+                                            <el-option label="总裁" value="总裁"></el-option>
+                                            <el-option label="总经理" value="总经理"></el-option>
+                                            <el-option label="经理" value="经理"></el-option>
+                                            <el-option label="员工" value="员工"></el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                    <el-form-item label="性别" prop="gender" :label-width="formLabelWidth">
+                                        <el-radio-group v-model="staffEditForm.gender" disabled>
+                                            <el-radio label="男"></el-radio>
+                                            <el-radio label="女"></el-radio>
+                                        </el-radio-group>
+                                    </el-form-item>
+                                    <el-form-item label="管理员" prop="admin" :label-width="formLabelWidth">
+                                        <el-switch v-model="staffEditForm.admin"></el-switch>
+                                    </el-form-item>
+                                    <el-form-item>
+                                        <el-button type="primary" plain round
+                                                   @click="confirmStaffEdit('staffEditForm')">修改
+                                        </el-button>
+                                        <el-button plain round @click="cancelEditStaff">取消</el-button>
+                                    </el-form-item>
+                                </el-form>
+                            </el-dialog>
+
+                            <!-- 员工离职 -->
+                            <el-button type="danger" plain round @click="staffDimission">员工离职</el-button>
+
+                            <!-- 员工离职弹窗 -->
+                            <el-dialog
+                                    title="提示"
+                                    :visible.sync="staffDimissionDialogVisible"
+                                    width="30%">
+                                <span>确定删除该员工？</span>
+                                <span slot="footer" class="dialog-footer">
+                                    <el-button plain round @click="staffDimissionDialogVisible = false">取 消</el-button>
+                                    <el-button type="primary" plain round @click="dimission">确 定</el-button>
+                                </span>
+                            </el-dialog>
+                        </el-col>
+
+                        <!-- 按条件查询 -->
+                        <el-col :span="16">
+                            <el-form :inline="true" :model="staffCondition" class="demo-form-inline">
+                                <el-form-item label="姓名">
+                                    <el-input v-model="staffCondition.userName" placeholder="姓名"></el-input>
+                                </el-form-item>
+                                <el-form-item label="部门">
+                                    <el-input v-model="staffCondition.dept" placeholder="部门"></el-input>
+                                </el-form-item>
+                                <el-form-item label="职位">
+                                    <el-input v-model="staffCondition.post" placeholder="职位"></el-input>
+                                </el-form-item>
+                                <el-form-item>
+                                    <el-button type="primary" plain round @click="queryStaff">查询</el-button>
+                                </el-form-item>
+                            </el-form>
+                        </el-col>
+                    </el-row>
+
+                    <!-- 员工列表 -->
+                    <el-table
+                            ref="singleTable"
+                            :data="staffTable"
+                            highlight-current-row
+                            @current-change="selectOneStaff">
+                        <el-table-column
+                                fixed
+                                prop="userName"
+                                label="姓名"
+                                align="center">
+                        </el-table-column>
+                        <el-table-column
+                                prop="dept"
+                                label="部门"
+                                align="center">
+                        </el-table-column>
+                        <el-table-column
+                                prop="post"
+                                label="职位"
+                                align="center">
+                        </el-table-column>
+                        <el-table-column
+                                prop="gender"
+                                label="性别"
+                                align="center">
+                        </el-table-column>
+                        <el-table-column
+                                fixed="right"
+                                prop="admin"
+                                label="管理员"
+                                align="center">
+                        </el-table-column>
+                    </el-table>
+
+                    <!-- 分页工具条 -->
+                    <el-pagination
+                            @size-change="staffTableSizeChange"
+                            @current-change="staffTableCurrentChange"
+                            :current-page="pagination.currentPage"
+                            :page-sizes="[10, 15, 20]"
+                            :page-size="pagination.pageSize"
+                            layout="total, sizes, prev, pager, next, jumper"
+                            :total="pagination.total">
+                    </el-pagination>
+                </template>
+
+                <!-- 进入签到页面弹窗 -->
+                <el-dialog
+                        title="提示"
+                        :visible.sync="displayCheckInPageDialogVisible"
+                        width="30%">
+                    <span>是否进入签到页面？</span>
+                    <span slot="footer" class="dialog-footer">
+                        <el-button plain round @click="displayCheckInPageDialogVisible = false">取 消</el-button>
+                        <el-button plain round type="primary" @click="displayCheckInPage">确 定</el-button>
+                    </span>
+                </el-dialog>
+
+            </el-main>
+        </el-container>
+    </el-container>
+</div>
+
+<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+<script src="/js/api/vue@2.js"></script>
+<!-- 引入 Element 组件库 -->
+<script src="/js/api/index.js"></script>
+<!-- Axios -->
+<script src="/js/api/axios.min.js"></script>
+<!-- jQuery -->
+<script src="/js/api/jquery-3.6.0.slim.min.js"></script>
+<!-- 引入个人中心 js -->
+<script src="/js/workstation.js"></script>
+</body>
+</html>

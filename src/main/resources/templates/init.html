@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>管理员注册页</title>
+    <link rel="icon" type="image/png" href="https://cn.vuejs.org/images/icons/apple-icon-114x114.png">
+    <!-- 引入 Element 样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- 引入登录页 css -->
+    <link rel="stylesheet" href="/css/init.css">
+</head>
+<body>
+
+<div id="app">
+    <div class="main">
+        <el-form :model="staffHiredForm" :rules="rulesStaffHired" ref="staffHiredForm"
+                 label-width="100px" class="demo-ruleForm">
+            <el-form-item label="姓名" prop="userName" :label-width="formLabelWidth">
+                <el-input v-model="staffHiredForm.userName" placeholder="请输入姓名"></el-input>
+            </el-form-item>
+            <el-form-item label="部门" prop="dept" :label-width="formLabelWidth">
+                <el-select v-model="staffHiredForm.dept" placeholder="请选择部门">
+                    <el-option label="总裁办" value="总裁办"></el-option>
+                    <el-option label="财务部" value="财务部"></el-option>
+                    <el-option label="工程部" value="工程部"></el-option>
+                    <el-option label="商务部" value="商务部"></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="职位" prop="post" :label-width="formLabelWidth">
+                <el-select v-model="staffHiredForm.post" placeholder="请选择职位">
+                    <el-option label="总裁" value="总裁"></el-option>
+                    <el-option label="总经理" value="总经理"></el-option>
+                    <el-option label="经理" value="经理"></el-option>
+                    <el-option label="员工" value="员工"></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="性别" prop="gender" :label-width="formLabelWidth">
+                <el-radio-group v-model="staffHiredForm.gender">
+                    <el-radio label="男"></el-radio>
+                    <el-radio label="女"></el-radio>
+                </el-radio-group>
+            </el-form-item>
+            <el-form-item label="照片" prop="imgBase64" :label-width="formLabelWidth">
+                <el-button type="info" plain round @click="photoDialog">拍照录入</el-button>
+
+                <!-- 人脸拍照录入 -->
+                <el-dialog
+                        title="拍照"
+                        :visible.sync="photographDialogVisible"
+                        @close="closeCamera"
+                        append-to-body
+                        center>
+                    <video ref="video" width="100%" height="480" autoplay></video>
+                    <canvas ref="canvas" width="640" height="480"
+                            style="display: none"></canvas>
+                    <span slot="footer" class="dialog-footer">
+                                                <el-button @click="photographDialogVisible = false" plain
+                                                           round>取 消</el-button>
+                                                <el-button type="primary" plain round
+                                                           @click="photo">确 定</el-button>
+                                            </span>
+
+                </el-dialog>
+                <br>或
+                <el-upload
+                        class="upload-demo"
+                        action="#"
+                        multiple
+                        :limit="1"
+                        :on-exceed="handleExceed"
+                        :http-request="httpRequest"
+                        :file-list="fileList">
+                    <el-button type="primary" plain round>点击上传</el-button>
+                    <div slot="tip" class="el-upload__tip">只能上传jpg/jpeg/png/webp文件，且不超过5M</div>
+                </el-upload>
+            </el-form-item>
+            <el-form-item label="管理员授权码" prop="admin_code" :label-width="formLabelWidth">
+                <el-input v-model="staffHiredForm.admin_code" placeholder="请输入管理员授权码"></el-input>
+            </el-form-item>
+            <el-form-item>
+                <div class="submit">
+                    <el-button type="primary" plain round
+                               @click="submitStaffHiredForm('staffHiredForm')">立即创建
+                    </el-button>
+                    <el-button plain round @click="resetForm('staffHiredForm')">重置</el-button>
+                </div>
+            </el-form-item>
+        </el-form>
+
+    </div>
+</div>
+
+
+<!-- jQuery -->
+<script src="/js/api/jquery-3.6.0.slim.min.js"></script>
+<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+<script src="/js/api/vue@2.js"></script>
+<!-- 引入 Element 组件库 -->
+<script src="/js/api/index.js"></script>
+<!-- Axios -->
+<script src="/js/api/axios.min.js"></script>
+<!-- 引入登录页 js -->
+<script src="/js/init.js"></script>
+
+</body>
+</html>

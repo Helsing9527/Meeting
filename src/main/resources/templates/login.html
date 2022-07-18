@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+    <link rel="icon" type="image/png" href="https://cn.vuejs.org/images/icons/apple-icon-114x114.png">
+    <!-- 引入 Element 样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- 引入登录页 css -->
+    <link rel="stylesheet" href="/css/login.css">
+</head>
+<body>
+
+<div id="app">
+    <div class="main">
+        <video ref="video" width="640" height="480" autoplay></video>
+        <canvas ref="canvas" width="640" height="480" style="display: none"></canvas>
+    </div>
+    <div class="main">
+        <!-- 登录 -->
+        <el-button type="primary" plain round @click="login">登 录</el-button>
+    </div>
+</div>
+
+
+<!-- jQuery -->
+<script src="/js/api/jquery-3.6.0.slim.min.js"></script>
+<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+<script src="/js/api/vue@2.js"></script>
+<!-- 引入 Element 组件库 -->
+<script src="/js/api/index.js"></script>
+<!-- Axios -->
+<script src="/js/api/axios.min.js"></script>
+<!-- 引入登录页 js -->
+<script src="/js/login.js"></script>
+
+</body>
+</html>
