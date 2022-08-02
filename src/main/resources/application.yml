@@ -32,8 +32,8 @@ mybatis-plus:
 #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 #腾讯 SecretId/SecretKey
-SecretId: AKIDYuznLcbJkunPkpc8NL2TcXEfpiLhncBT
-SecretKey: 4sTosfBIBn7BxQddMozsWtymJZYGhrkM
+SecretId: 
+SecretKey: 
 
 #注册管理员密匙
 adminCode: 12345
